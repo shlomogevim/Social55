@@ -16,79 +16,30 @@ import com.sg.social55.databinding.FragmentHomeBinding
 
 
 
-/*class HomeFragment : Fragment() {
-
+class HomeFragment : Fragment() {
+    lateinit var binding: FragmentHomeBinding
 
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_home, container, false)
-    }
+        binding = FragmentHomeBinding.inflate(inflater, container, false)
+        binding.textHome.text = "this ia home"
+        binding.btn1.setOnClickListener {
+            val data = HashMap<String, Any>()
+            data.put("username", "shlomoooo")
+            data.put("lastnmme", "gevimoooo")
+            FirebaseFirestore.getInstance().collection("JustChecking").add(data)
+                .addOnSuccessListener {
+                    Log.d("ff", "oooreaaaaa")
+                }
+                .addOnFailureListener {
+                    Log.d("ff", "${it.localizedMessage}")
+                }
+        }
 
-
-}*/
-
-
-
-
-
-
-
-
-
-class HomeFragment : Fragment() {
-
-    private lateinit var homeViewModel: HomeViewModel
-    private var _binding: FragmentHomeBinding? = null
-
-    // This property is only valid between onCreateView and
-    // onDestroyView.
-    private val binding get() = _binding!!
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        homeViewModel =
-            ViewModelProvider(this).get(HomeViewModel::class.java)
-
-        _binding = FragmentHomeBinding.inflate(inflater, container, false)
-        val root: View = binding.root
-
-        val textView: TextView = binding.textHome
-
-
-
-
-
-     /*     val but1:Button=binding.btn1
-        but1.setOnClickListener {
-             val data=HashMap<String,Any>()
-             data.put("username","shlom")
-             data.put("lastnmme","gevim")
-             FirebaseFirestore.getInstance().collection("JustChecking").add(data)
-                 .addOnSuccessListener {
-                     Log.d("ff","oooreaaaaa")
-                 }
-                 .addOnFailureListener {
-                     Log.d("ff","${it.localizedMessage}")
-                 }
-        }*/
-
-
-
-
-        homeViewModel.text.observe(viewLifecycleOwner, Observer {
-            textView.text = it
-        })
-        return root
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
+        return binding.root
     }
 }
+
