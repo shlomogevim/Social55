@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "644179122593",
+    "project_id": "social55firestore",
+    "storage_bucket": "social55firestore.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:644179122593:android:8311195f506f67fbcbd3e0",
+        "android_client_info": {
+          "package_name": "com.sg.social55"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "644179122593-7k4ht64lgsgm88pk4tufigkndu32q64i.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBQrt1dO94Dy82hW7krGU2Gm-iIfs9NJws"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "644179122593-7k4ht64lgsgm88pk4tufigkndu32q64i.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
