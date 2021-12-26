@@ -10,6 +10,15 @@
         android:supportsRtl="false"
         android:theme="@style/Theme.Social55">
         <activity
+            android:name=".setting.SignUpActivity"
+            android:exported="false" />
+        <activity
+            android:name=".setting.SignInActivity"
+            android:exported="false" />
+        <activity
+            android:name=".setting.AccountSettingActivity"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity"
             android:exported="true"
             android:label="@string/app_name">

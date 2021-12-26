@@ -3,15 +3,42 @@ package com.sg.social55
 import android.os.Bundle
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.navigation.findNavController
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.setupActionBarWithNavController
-import androidx.navigation.ui.setupWithNavController
+import androidx.fragment.app.Fragment
 import com.sg.social55.databinding.ActivityMainBinding
+import com.sg.social55.fragments.HomeFragment
+import com.sg.social55.fragments.NotificationFragment
+import com.sg.social55.fragments.ProfileFragment
+import com.sg.social55.fragments.SearchFragment
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+    private val onNavigationItemSelectedListener =
+        BottomNavigationView.OnNavigationItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.nav_home -> {
+                    moveToFragment(HomeFragment())
+                    return@OnNavigationItemSelectedListener true
+                }
+                R.id.nav_search -> {
+                    moveToFragment(SearchFragment())
+                    return@OnNavigationItemSelectedListener true
+                }
+                R.id.nav_add_post -> {
+
+                    return@OnNavigationItemSelectedListener true
+                }
+                R.id.nav_notification -> {
+                    moveToFragment(NotificationFragment())
+                    return@OnNavigationItemSelectedListener true
+                }
+                R.id.nav_profile -> {
+                    moveToFragment(ProfileFragment())
+                    return@OnNavigationItemSelectedListener true
+                }
+            }
+            false
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -20,19 +47,15 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
 
+        binding.navView.setOnNavigationItemSelectedListener(onNavigationItemSelectedListener)
+        moveToFragment(HomeFragment())
 
-
-        val navView: BottomNavigationView = binding.navView
-
-        val navController = findNavController(R.id.nav_host_fragment_activity_main)
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
-        val appBarConfiguration = AppBarConfiguration(
-            setOf(
-                R.id.navigation_home, R.id.navigation_dashboard, R.id.navigation_notifications
-            )
-        )
-       // setupActionBarWithNavController(navController, appBarConfiguration)
-        navView.setupWithNavController(navController)
     }
+
+    private fun moveToFragment(fragment: Fragment) {
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, fragment!!).commit()
+    }
+
+
 }
