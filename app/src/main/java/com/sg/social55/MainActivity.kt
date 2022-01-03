@@ -1,6 +1,7 @@
 package com.sg.social55
 
 import android.os.Bundle
+import android.widget.TextView
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -12,6 +13,8 @@ import com.sg.social55.fragments.SearchFragment
 
 class MainActivity : AppCompatActivity() {
 
+    private  var selecteFragment:Fragment?=null
+
 
 
     private lateinit var binding: ActivityMainBinding
@@ -19,11 +22,11 @@ class MainActivity : AppCompatActivity() {
         BottomNavigationView.OnNavigationItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.nav_home -> {
-                    moveToFragment(HomeFragment())
+                   moveToFragment(HomeFragment())
                     return@OnNavigationItemSelectedListener true
                 }
                 R.id.nav_search -> {
-                    moveToFragment(SearchFragment())
+                  moveToFragment(SearchFragment())
                     return@OnNavigationItemSelectedListener true
                 }
                 R.id.nav_add_post -> {
@@ -31,7 +34,7 @@ class MainActivity : AppCompatActivity() {
                     return@OnNavigationItemSelectedListener true
                 }
                 R.id.nav_notification -> {
-                    moveToFragment(NotificationFragment())
+                  moveToFragment(NotificationFragment())
                     return@OnNavigationItemSelectedListener true
                 }
                 R.id.nav_profile -> {
@@ -47,7 +50,6 @@ class MainActivity : AppCompatActivity() {
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
 
         binding.navView.setOnNavigationItemSelectedListener(onNavigationItemSelectedListener)
         moveToFragment(HomeFragment())
