@@ -1,7 +1,6 @@
 package com.sg.social55
 
 import android.os.Bundle
-import android.widget.TextView
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -13,7 +12,7 @@ import com.sg.social55.fragments.SearchFragment
 
 class MainActivity : AppCompatActivity() {
 
-    private  var selecteFragment:Fragment?=null
+
 
 
 
@@ -45,8 +44,11 @@ class MainActivity : AppCompatActivity() {
             false
         }
 
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
