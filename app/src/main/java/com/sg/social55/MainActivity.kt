@@ -13,19 +13,16 @@ import com.sg.social55.fragments.SearchFragment
 class MainActivity : AppCompatActivity() {
 
 
-
-
-
     private lateinit var binding: ActivityMainBinding
     private val onNavigationItemSelectedListener =
         BottomNavigationView.OnNavigationItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.nav_home -> {
-                   moveToFragment(HomeFragment())
+                    moveToFragment(HomeFragment())
                     return@OnNavigationItemSelectedListener true
                 }
                 R.id.nav_search -> {
-                  moveToFragment(SearchFragment())
+                    moveToFragment(SearchFragment())
                     return@OnNavigationItemSelectedListener true
                 }
                 R.id.nav_add_post -> {
@@ -33,7 +30,7 @@ class MainActivity : AppCompatActivity() {
                     return@OnNavigationItemSelectedListener true
                 }
                 R.id.nav_notification -> {
-                  moveToFragment(NotificationFragment())
+                    moveToFragment(NotificationFragment())
                     return@OnNavigationItemSelectedListener true
                 }
                 R.id.nav_profile -> {
@@ -43,7 +40,6 @@ class MainActivity : AppCompatActivity() {
             }
             false
         }
-
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -56,12 +52,16 @@ class MainActivity : AppCompatActivity() {
         binding.navView.setOnNavigationItemSelectedListener(onNavigationItemSelectedListener)
         moveToFragment(HomeFragment())
 
+
     }
 
     private fun moveToFragment(fragment: Fragment) {
         supportFragmentManager.beginTransaction()
-            .replace(R.id.fragment_container, fragment!!).commit()
+            .addToBackStack("popy")
+            .replace(R.id.fragment_container, fragment!!)
+            .commit()
     }
+
 
 
 }
