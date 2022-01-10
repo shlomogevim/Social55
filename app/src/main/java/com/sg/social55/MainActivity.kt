@@ -1,6 +1,7 @@
 package com.sg.social55
 
 import android.os.Bundle
+import androidx.activity.OnBackPressedCallback
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -52,6 +53,12 @@ class MainActivity : AppCompatActivity() {
         binding.navView.setOnNavigationItemSelectedListener(onNavigationItemSelectedListener)
         moveToFragment(HomeFragment())
 
+       onBackPressedDispatcher?.addCallback(this,object :OnBackPressedCallback(true){
+           override fun handleOnBackPressed() {
+               moveToFragment(HomeFragment())
+           }
+       })
+
 
     }
 
@@ -59,8 +66,12 @@ class MainActivity : AppCompatActivity() {
         supportFragmentManager.beginTransaction()
             .addToBackStack("popy")
             .replace(R.id.fragment_container, fragment!!)
+            //.addToBackStack("tag")
             .commit()
     }
+
+
+
 
 
 

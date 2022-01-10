@@ -59,7 +59,7 @@ class UserAdapter(val users: List<User>, var isFragment: Boolean = false) :
         private fun followToFollowing(user: User) {
             val data = HashMap<String, Any>()
             data.put("bol", true)
-            data.put("name", user.userName)
+           // data.put("name", user.userName)
             val currentName = currentUser?.displayName.toString()
 
             FirebaseFirestore.getInstance().collection(FOLLOW_REF).document(currentName)
