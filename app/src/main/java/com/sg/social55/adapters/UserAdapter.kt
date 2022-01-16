@@ -86,6 +86,7 @@ class UserAdapter(val users: List<User>, var isFragment: Boolean = false) :
         }
 
         fun bindUser(user: User) {
+
             userName.text = user.userName
             userFullName.text = user.fullName
             Picasso.get().load(user.profileImage).placeholder(R.drawable.profile)

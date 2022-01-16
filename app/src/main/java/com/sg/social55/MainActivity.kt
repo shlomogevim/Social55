@@ -1,5 +1,6 @@
 package com.sg.social55
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.OnBackPressedCallback
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -27,7 +28,8 @@ class MainActivity : AppCompatActivity() {
                     return@OnNavigationItemSelectedListener true
                 }
                 R.id.nav_add_post -> {
-
+                    item.isChecked=false
+                     startActivity(Intent(this,AddPostActivity::class.java))
                     return@OnNavigationItemSelectedListener true
                 }
                 R.id.nav_notification -> {
