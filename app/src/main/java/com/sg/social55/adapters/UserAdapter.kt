@@ -56,12 +56,44 @@ class UserAdapter(val users: List<User>, var isFragment: Boolean = false) :
             itemView?.findViewById<CircleImageView>(R.id.user_profile_image_search)
         val followButton = itemView?.findViewById<Button>(R.id.follow_btn_search)
 
+        fun bindUser(user: User) {
+            userName.text = user.userName
+            userFullName.text = user.fullName
+            Picasso.get().load(user.profileImage).placeholder(R.drawable.profile)
+                .into(userProfileImage)
+
+            checkFolloingStatus(user)
+
+            followButton.setOnClickListener {
+                if (followButton.text == "Follow") {
+                    followToFollowing(user)
+                } else {
+                    followingToFollow(user)
+                }
+                checkFolloingStatus(user)
+            }
+
+            itemView.setOnClickListener {
+                if (isFragment) {
+                    // val pref = context.getSharedPreferences("PREFS", Context.MODE_PRIVATE).edit()
+                    val pref = context.getSharedPreferences("PREFS", Context.MODE_PRIVATE).edit()
+                    val uid1=user.uid
+                    pref.putString("userUid",uid1)
+                    pref.putString("userName", user.userName)
+                    pref.apply()
+                    (context as FragmentActivity).supportFragmentManager.beginTransaction()
+                        .replace(R.id.fragment_container, ProfileFragment()).commit()
+                } else {
+                    val intent = Intent(context, MainActivity::class.java)
+                    intent.putExtra("publisherId", user.uid)
+                    context.startActivity(intent)
+                }
+            }
+        }
         private fun followToFollowing(user: User) {
             val data = HashMap<String, Any>()
-            data.put("bol", true)
-           // data.put("name", user.userName)
+            data["bol"] = true
             val currentName = currentUser?.displayName.toString()
-
             FirebaseFirestore.getInstance().collection(FOLLOW_REF).document(currentName)
                 .collection(FOLLOWING_REF).document(user.userName)
                 .set(data) //current follow after  user
@@ -85,50 +117,12 @@ class UserAdapter(val users: List<User>, var isFragment: Boolean = false) :
                 }
         }
 
-        fun bindUser(user: User) {
-
-            userName.text = user.userName
-            userFullName.text = user.fullName
-            Picasso.get().load(user.profileImage).placeholder(R.drawable.profile)
-                .into(userProfileImage)
-
-            checkFolloingStatus(user)
-
-            followButton.setOnClickListener {
-                if (followButton.text == "Follow") {
-                    followToFollowing(user)
-                } else {
-                    followingToFollow(user)
-                }
-                checkFolloingStatus(user)
-            }
-
-            itemView.setOnClickListener {
-                if (isFragment) {
-                   // val pref = context.getSharedPreferences("PREFS", Context.MODE_PRIVATE).edit()
-                    val pref = context.getSharedPreferences("PREFS", Context.MODE_PRIVATE).edit()
-                    val uid1=user.uid
-                    pref.putString("userUid",uid1)
-                    pref.putString("userName", user.userName)
-                    pref.apply()
-                    (context as FragmentActivity).supportFragmentManager.beginTransaction()
-                        .replace(R.id.fragment_container, ProfileFragment()).commit()
-                } else {
-                    val intent = Intent(context, MainActivity::class.java)
-                    intent.putExtra("publisherId", user.uid)
-                    context.startActivity(intent)
-                }
-            }
-        }
-
 
         private fun checkFolloingStatus(user: User) {
             val currentName = currentUser?.displayName.toString()
             val userName = user.userName
-
             FirebaseFirestore.getInstance().collection(FOLLOW_REF)
                 .document(currentName).collection(FOLLOWING_REF).document(userName).get()
-
                 .addOnSuccessListener {
                     if (it.exists()) {
                         followButton?.text = "Following"
