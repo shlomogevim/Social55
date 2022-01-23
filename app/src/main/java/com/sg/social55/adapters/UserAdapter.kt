@@ -3,13 +3,11 @@ package com.sg.social55.adapters
 
 import android.content.Context
 import android.content.Intent
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
-import android.widget.Toast
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
@@ -22,7 +20,7 @@ import com.sg.social55.uilities.FOLLOW_REF
 import com.squareup.picasso.Picasso
 import de.hdodenhof.circleimageview.CircleImageView
 import com.google.firebase.firestore.FirebaseFirestore
-import com.sg.social55.MainActivity
+import com.sg.social55.activities.MainActivity
 import com.sg.social55.fragments.ProfileFragment
 
 class UserAdapter(val users: List<User>, var isFragment: Boolean = false) :

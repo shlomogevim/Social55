@@ -1,4 +1,4 @@
-package com.sg.social55
+package com.sg.social55.activities
 
 import android.content.Intent
 import android.os.Bundle
@@ -6,6 +6,7 @@ import androidx.activity.OnBackPressedCallback
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import com.sg.social55.R
 import com.sg.social55.databinding.ActivityMainBinding
 import com.sg.social55.fragments.HomeFragment
 import com.sg.social55.fragments.NotificationFragment
@@ -29,7 +30,7 @@ class MainActivity : AppCompatActivity() {
                 }
                 R.id.nav_add_post -> {
                     item.isChecked=false
-                     startActivity(Intent(this,AddPostActivity::class.java))
+                     startActivity(Intent(this, AddPostActivity::class.java))
                     return@OnNavigationItemSelectedListener true
                 }
                 R.id.nav_notification -> {
