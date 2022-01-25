@@ -14,14 +14,12 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.sg.social55.R
 import com.sg.social55.model.User
-import com.sg.social55.uilities.FOLLOWER_REF
-import com.sg.social55.uilities.FOLLOWING_REF
-import com.sg.social55.uilities.FOLLOW_REF
 import com.squareup.picasso.Picasso
 import de.hdodenhof.circleimageview.CircleImageView
 import com.google.firebase.firestore.FirebaseFirestore
 import com.sg.social55.activities.MainActivity
 import com.sg.social55.fragments.ProfileFragment
+import com.sg.social55.uilities.*
 
 class UserAdapter(val users: List<User>, var isFragment: Boolean = false) :
     RecyclerView.Adapter<UserAdapter.ViewHolder>() {
@@ -73,11 +71,9 @@ class UserAdapter(val users: List<User>, var isFragment: Boolean = false) :
 
             itemView.setOnClickListener {
                 if (isFragment) {
-                    // val pref = context.getSharedPreferences("PREFS", Context.MODE_PRIVATE).edit()
                     val pref = context.getSharedPreferences("PREFS", Context.MODE_PRIVATE).edit()
-                    val uid1=user.uid
-                    pref.putString("userUid",uid1)
-                    pref.putString("userName", user.userName)
+                    pref.putString(USER_IDEXSRTA,user.uid)
+                    pref.putString(USER_USERNAMEEXSRTA, user.userName)
                     pref.apply()
                     (context as FragmentActivity).supportFragmentManager.beginTransaction()
                         .replace(R.id.fragment_container, ProfileFragment()).commit()
