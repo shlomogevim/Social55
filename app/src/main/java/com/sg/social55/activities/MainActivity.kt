@@ -65,10 +65,10 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    override fun onBackPressed() {
+  /*  override fun onBackPressed() {
         super.onBackPressed()
         finish()
-    }
+    }*/
 
     private fun moveToFragment(fragment: Fragment) {
         supportFragmentManager.beginTransaction()
