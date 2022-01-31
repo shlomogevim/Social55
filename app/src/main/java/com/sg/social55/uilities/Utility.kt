@@ -14,31 +14,43 @@ import com.sg.social55.model.User
 class Utility {
 
     val currentUser = FirebaseAuth.getInstance().currentUser
-    fun logi( element1:String,element2:String="",element3:String="",element4:String=""){
-
-       /* if (element1!="" && element2=="" && element3=="" && element4==""){
-            Log.d("gg"," element1=${element1}")
-        }*/
-        if (element1!="" && element2=="" && element3=="" && element4==""){
-            Log.d("gg"," element1=${element1}")
+    val currentUserUid = FirebaseAuth.getInstance().currentUser?.uid.toString()
+    fun logi(
+        element1: String,
+        element2: String = "",
+        element3: String = "",
+        element4: String = ""
+    ) {
+        if (element1 != "" && element2 == "" && element3 == "" && element4 == "") {
+            Log.d("gg", "${element1}")
         }
-        if (element1!="" && element2!="" && element3=="" && element4==""){
-            Log.d("gg"," element1=${element1} , element2=${element2}")
+        if (element1 != "" && element2 != "" && element3 == "" && element4 == "") {
+            Log.d("gg", "${element1} ,${element2}")
+        }
+        if (element1 != "" && element2 != "" && element3 != "" && element4 == "") {
+            Log.d("gg", "${element1} ,${element2} ,${element3}")
+        }
+        if (element1 != "" && element2 != "" && element3 != "" && element4 != "") {
+            Log.d("gg", "${element1} ,${element2} ${element3},${element4}")
         }
 
-        if (element1!="" && element2!="" && element3!="" && element4==""){
-            Log.d("gg"," element1=${element1} ,element2=${element2} ,element3=${element3}")
-        }
-        if (element1!="" && element2!="" && element3!="" && element4!=""){
-            Log.d("gg"," element1=${element1} ,element2=${element2} ,element3=${element3} ,element4=${element4}")
-        }
+        /*     if (element1 != "" && element2 == "" && element3 == "" && element4 == "") {
+                 Log.d("gg", " element1=${element1}")
+             }
+             if (element1 != "" && element2 != "" && element3 == "" && element4 == "") {
+                 Log.d("gg", " element1=${element1} , element2=${element2}")
+             }
 
-
-
-
-
+             if (element1 != "" && element2 != "" && element3 != "" && element4 == "") {
+                 Log.d("gg", " element1=${element1} ,element2=${element2} ,element3=${element3}")
+             }
+             if (element1 != "" && element2 != "" && element3 != "" && element4 != "") {
+                 Log.d(
+                     "gg",
+                     " element1=${element1} ,element2=${element2} ,element3=${element3} ,element4=${element4}"
+                 )
+             }*/
     }
-
 
     fun convertToUser(snap: DocumentSnapshot?): User {
         var userName = "no userName"
@@ -76,32 +88,109 @@ class Utility {
         description = snap?.getString(POST_DISCTIPTION).toString()
 
 
-       // Log.d("gg","postId=$postId,publisger=$publisher,description=$description")
+        // Log.d("gg","postId=$postId,publisger=$publisher,description=$description")
 
-       likeNumber = snap?.getString(POST_LIKECOUNTER).toString()
+        likeNumber = snap?.getString(POST_LIKECOUNTER).toString()
 
         val newPost = Post(postId, postImage, publisher, description, publisherId, likeNumber)
         return newPost
     }
-   fun convertToComment(snap: DocumentSnapshot?) :Comment{
-       val text=snap?.getString(COMMENT_TEXT).toString()
-       val publisher=snap?.getString(COMMENT_PUBLISHER_USERNAME).toString()
-    return  Comment(text,publisher)
-   }
 
-    fun operateLikeCounter(postId: String, likesCounter: TextView) {
+    fun convertToComment(snap: DocumentSnapshot?): Comment {
+        val text = snap?.getString(COMMENT_TEXT).toString()
+        val publisher = snap?.getString(COMMENT_PUBLISHER_USERNAME).toString()
+        return Comment(text, publisher)
+    }
+
+    /* fun operateLikeCounter(postId: String, likesCounter: TextView) {
+         var counter = 0
+         FirebaseFirestore.getInstance().collection(USER_REF).get()
+             .addOnSuccessListener {
+                 for (doc in it.documents) {
+                     val currentId = doc.id.toString()
+                     FirebaseFirestore.getInstance().collection(LIKES_REF).document(postId)
+                         .collection(currentId).document(SIMPLE_POST).get()
+                         .addOnSuccessListener {
+                             if (it.exists()) {
+                                 counter++
+                                 likesCounter.text = counter.toString() + " Likes"
+                             } else {
+                                 likesCounter.text = counter.toString() + " Likes"
+                             }
+                         }
+                 }
+             }
+     }*/
+
+
+    /* fun isLikes(postId: String, likeBtn: ImageView) {
+         val currentUserUid = FirebaseAuth.getInstance().currentUser?.uid.toString()
+         FirebaseFirestore.getInstance().collection(LIKES_REF)
+             .document(postId).collection(currentUserUid).document(SIMPLE_POST)
+             .get().addOnSuccessListener {
+                 if (it.exists()) {
+                     likeBtn.setImageResource(R.drawable.heart_clicked)
+                     likeBtn.tag = LIKE_TAG
+                 } else
+                     likeBtn.setImageResource(R.drawable.heart_not_clicked)
+                 likeBtn.tag = NOT_LIKE_TAG
+             }
+     }*/
+
+    /*  fun operateLikeCounterNew(postId: String, likesCounter: TextView) {
+          var counter = 0
+          FirebaseFirestore.getInstance().collection(USER_REF).get()
+              .addOnSuccessListener {
+                  for (doc in it.documents) {
+                      val currentId = doc.id.toString()
+                      FirebaseFirestore.getInstance().collection(LIKES_REF_NEW).document(postId)
+                          .collection(USERS).document(currentId)
+                          .collection(SIMPLE_ITEM) .document(BOL) .get()
+                          .addOnSuccessListener {
+                              if (it.exists()) {
+                                  counter++
+                                  likesCounter.text = counter.toString() + " Likes"
+                              } else {
+                                  likesCounter.text = counter.toString() + " Likes"
+                              }
+                          }
+                  }
+              }
+      }*/
+
+
+    /* fun isLikesNew(postId: String, likeBtn: ImageView) {
+         FirebaseFirestore.getInstance().collection(LIKES_REF_NEW).document(postId)
+             .collection(USERS).document(currentUserUid)
+             .collection(SIMPLE_ITEM).document(BOL).get()
+             .addOnSuccessListener {
+                 if (it.exists()) {
+                     likeBtn.setImageResource(R.drawable.heart_clicked)
+                     likeBtn.tag = LIKE_TAG
+                 } else {
+                     likeBtn.setImageResource(R.drawable.heart_not_clicked)
+                     likeBtn.tag = NOT_LIKE_TAG
+                 }
+             }
+     }*/
+
+    fun operateLikeCounterNew(postId: String, likesCounter: TextView) {
         var counter = 0
         FirebaseFirestore.getInstance().collection(USER_REF).get()
             .addOnSuccessListener {
                 for (doc in it.documents) {
-                    val currentId = doc.id.toString()
-                    FirebaseFirestore.getInstance().collection(LIKES_REF).document(postId)
-                        .collection(currentId).document(SIMPLE_POST).get()
-                        .addOnSuccessListener {
-                            if (it.exists()) {
-                                counter++
-                                likesCounter.text = counter.toString() + " Likes"
-                            } else {
+                    val currentId = doc.id
+                    //   logi("currentId=$currentId , postId=$postId")
+                    FirebaseFirestore.getInstance().collection(LIKES_REF_NEW).document(postId)
+                        .collection(USERS).document(currentId)
+                        .collection(SIMPLE_ITEM).addSnapshotListener { value, error ->
+                            if (value != null) {
+                                //  logi("currentId11=$currentId , postId=$postId, value.documents.size=${value.documents.size}")
+                                if (value.documents.size > 0) {
+                                    // logi("currentId22=$currentId , postId=$postId, value.documents.size=${value.documents.size}")
+                                    counter++
+                                    //   likesCounter.text = counter.toString() + " Likes"
+                                }
                                 likesCounter.text = counter.toString() + " Likes"
                             }
                         }
@@ -110,18 +199,44 @@ class Utility {
     }
 
 
-    fun isLikes(postId: String, likeButton: ImageView) {
-        val currentUserUid = FirebaseAuth.getInstance().currentUser?.uid.toString()
-        FirebaseFirestore.getInstance().collection(LIKES_REF)
-            .document(postId).collection(currentUserUid).document(SIMPLE_POST)
-            .get().addOnSuccessListener {
-                if (it.exists()) {
-                    likeButton.setImageResource(R.drawable.heart_clicked)
-                    likeButton.tag = LIKE_TAG
-                } else
-                    likeButton.setImageResource(R.drawable.heart_not_clicked)
-                likeButton.tag = NOT_LIKE_TAG
+    fun likeBtn_Indicator(postId: String, likeBtn: ImageView, likeCounter: TextView) {
+        FirebaseFirestore.getInstance().collection(LIKES_REF_NEW).document(postId)
+            .collection(USERS).document(currentUserUid)
+            .collection(SIMPLE_ITEM).addSnapshotListener { value, error ->
+                if (value != null) {
+                    if (value.documents.size > 0) {
+                        likeBtn.setImageResource(R.drawable.heart_clicked)
+                        likeBtn.tag = LIKE_TAG
+                    } else {
+                        likeBtn.setImageResource(R.drawable.heart_not_clicked)
+                        likeBtn.tag = NOT_LIKE_TAG
+                    }
+                    operateLikeCounterNew(postId, likeCounter)
+                }
             }
+    }
+
+    fun likeBtn_Press(post: Post, likeBtn: ImageView) {
+        val data = simpleData()
+        val ref = FirebaseFirestore.getInstance().collection(LIKES_REF_NEW).document(post.postId)
+            .collection(USERS).document(currentUserUid)
+            .collection(SIMPLE_ITEM)
+        ref.document(BOL).get()
+            .addOnSuccessListener {
+                if (it.exists()) {
+                    likeBtn.setImageResource(R.drawable.heart_not_clicked)
+                    it.reference.delete()
+                } else {
+                    likeBtn.setImageResource(R.drawable.heart_clicked)
+                    ref.document(BOL).set(data)
+                }
+            }
+    }
+
+    fun simpleData(): HashMap<String, Any> {
+        val data = HashMap<String, Any>()
+        data["Bol"] = "Exist"
+        return data
     }
 
 

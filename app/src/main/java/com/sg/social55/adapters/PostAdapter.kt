@@ -14,6 +14,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.sg.social55.R
 import com.sg.social55.activities.CommentsActivity
+import com.sg.social55.activities.ShowUsersActivity
 import com.sg.social55.fragments.ProfileFragment
 import com.sg.social55.interfaces.LikeBtnInterface
 import com.sg.social55.model.Post
@@ -49,7 +50,7 @@ class PostAdapter(
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val profileImage = itemView?.findViewById<CircleImageView>(R.id.user_profile_image_post)
         val postImage = itemView?.findViewById<ImageView>(R.id.post_image_home)
-        val likeButton = itemView?.findViewById<ImageView>(R.id.post_image_like_btn)
+        val likeBtn = itemView?.findViewById<ImageView>(R.id.post_image_like_btn)
         val commentButton = itemView?.findViewById<ImageView>(R.id.post_image_comment_btn)
         val saveButton = itemView?.findViewById<ImageView>(R.id.post_save_comment_btn)
         val userName = itemView?.findViewById<TextView>(R.id.user_name_post)
@@ -76,8 +77,9 @@ class PostAdapter(
                 }
           //checkSaveStatus(post.postId, saveButton, keyBTnSetuatin)
           checkSaveStatus(post.postId, saveButton)
-            util.isLikes(post.postId, likeButton)
-            util.operateLikeCounter(post.postId, likesCounter)
+            //util.isLikes(post.postId, likeBtn)
+            util.likeBtn_Indicator(post.postId, likeBtn,likesCounter)
+            util.operateLikeCounterNew(post.postId, likesCounter)
             util.commentsCounter(post, commentCounter)
 
            operatePressButton(post, saveButton)
@@ -95,16 +97,23 @@ class PostAdapter(
                     .replace(R.id.fragment_container, ProfileFragment()).commit()
             }
             commentButton.setOnClickListener {
-
                 val intentComment = Intent(context, CommentsActivity::class.java)
                 intentComment.putExtra(POST_ID_EXSTRA, post.postId)
                 intentComment.putExtra(USER_USERNAMEEXSRTA, post.postPublisherId)
                 context.startActivity(intentComment)
 
             }
-            likeButton.setOnClickListener {
-                likeBtnFun.likePost(post, likeButton, likesCounter)
+            likeBtn.setOnClickListener {
+                util.likeBtn_Press(post, likeBtn)
             }
+
+            likesCounter.setOnClickListener {
+                val intent=Intent(context, ShowUsersActivity::class.java)
+                intent.putExtra(SHOW_USER_ID,post.postId)
+                intent.putExtra(SHOW_USER_TITLE, TITLE_LIKES)
+                context.startActivity(intent)
+            }
+
             commentCounter.setOnClickListener {
                 val intent = Intent(context, CommentsActivity::class.java)
                 intent.putExtra(POST_ID_EXSTRA, post.postId)

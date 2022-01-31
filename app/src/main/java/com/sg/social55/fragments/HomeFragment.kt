@@ -30,8 +30,7 @@ class HomeFragment : Fragment(), LikeBtnInterface {
     private lateinit var postList: ArrayList<Post>
     private lateinit var folloingList: MutableList<String>
     private lateinit var util: Utility
-    private val currentUser = FirebaseAuth.getInstance().currentUser
-
+    val currentUserUid = FirebaseAuth.getInstance().currentUser?.uid.toString()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -46,7 +45,7 @@ class HomeFragment : Fragment(), LikeBtnInterface {
 
         var recyclerView: RecyclerView? = null
         recyclerView = view.findViewById(R.id.recycler_view_home)
-       // recyclerView = view.recycler_view_home
+        // recyclerView = view.recycler_view_home
         val linearLayoutManager = LinearLayoutManager(context)
         linearLayoutManager.reverseLayout = true
         linearLayoutManager.stackFromEnd = true
@@ -89,7 +88,7 @@ class HomeFragment : Fragment(), LikeBtnInterface {
                     for (document in value.documents) {
                         val post = util.covertYoPost(document)
                         val publisher = post.publisher
-                       if (publisher in folloingList) {  //see posts only if the belong to his foloowingList
+                        if (publisher in folloingList) {  //see posts only if the belong to his foloowingList
                             postList.add(post)
                         }
                         postAdapter.notifyDataSetChanged()
@@ -98,68 +97,91 @@ class HomeFragment : Fragment(), LikeBtnInterface {
             }
     }
 
-    override fun likePost(post: Post, likeBtn: ImageView,likeConter:TextView) {
-        val data = HashMap<String, Any>()
-        if (currentUser != null) {
-            data["bol"] = currentUser.displayName.toString()
-            val userRef = FirebaseFirestore.getInstance().collection(LIKES_REF)
-                .document(post.postId).collection(currentUser.uid.toString()).document(SIMPLE_POST)
-            userRef.get().addOnSuccessListener {
+    /* override fun likePost(post: Post, likeBtn: ImageView,likeConter:TextView) {
+         val data = HashMap<String, Any>()
+         if (currentUser != null) {
+             data["bol"] = currentUser.displayName.toString()
+             val userRef = FirebaseFirestore.getInstance().collection(LIKES_REF)
+                 .document(post.postId).collection(currentUser.uid.toString()).document(SIMPLE_POST)
+             userRef.get().addOnSuccessListener {
+                 if (it.exists()) {
+                   //  Log.d("gg", "exsist   ")
+                     likeBtn.setImageResource(R.drawable.heart_not_clicked)
+                     it.reference.delete()
+
+                 } else {
+                    // Log.d("gg", "not exsist")
+                     likeBtn.setImageResource(R.drawable.heart_clicked)
+                     userRef.set(data)
+                 }
+             }
+         }
+         operateLikeCounter(post,likeConter)
+     }*/
+
+    override fun likePost(post: Post, likeBtn: ImageView, likeConter: TextView) {
+      /*  val data = util.simpleData()
+        val ref = FirebaseFirestore.getInstance().collection(LIKES_REF_NEW).document(post.postId)
+            .collection(USERS).document(currentUserUid)
+            .collection(SIMPLE_ITEM)
+        ref.document(BOL).get()
+            .addOnSuccessListener {
                 if (it.exists()) {
-                  //  Log.d("gg", "exsist   ")
                     likeBtn.setImageResource(R.drawable.heart_not_clicked)
                     it.reference.delete()
-
                 } else {
-                   // Log.d("gg", "not exsist")
                     likeBtn.setImageResource(R.drawable.heart_clicked)
-                    userRef.set(data)
+                    ref.document(BOL).set(data)
                 }
-            }
-        }
-        operateLikeCounter(post,likeConter)
-    }
-
-    private fun operateLikeCounter(post: Post, likeConter: TextView) {
-        var counter=0
-        FirebaseFirestore.getInstance().collection(USER_REF).get()
-            .addOnSuccessListener {
-                for (doc in it.documents){
-                    val currentId=doc.id.toString()
-
-                    FirebaseFirestore.getInstance().collection(LIKES_REF).document(post.postId)
-                        .collection(currentId).document(SIMPLE_POST).get()
-                        .addOnSuccessListener {
-                           // Log.d("gg","currentId=$currentId, post.postId=${post.postId}")
-                           // Log.d("gg","it.exists()==>${it.exists()}")
-                            if (it.exists()){
-                                counter++
-                                likeConter.text= "$counter Likes"
-                                    // Log.d("gg","counter inside= $counter")
-                            }else{
-                                likeConter.text= "$counter Likes"
-                            }
-                        }
-                }
-            }
-
+            }*/
     }
 
 
+    /*  val data = HashMap<String, Any>()
+      if (currentUser != null) {
+          data["bol"] = currentUser.displayName.toString()
+          val userRef = FirebaseFirestore.getInstance().collection(LIKES_REF)
+              .document(post.postId).collection(currentUser.uid.toString()).document(SIMPLE_POST)
+          userRef.get().addOnSuccessListener {
+              if (it.exists()) {
+                  //  Log.d("gg", "exsist   ")
+                  likeBtn.setImageResource(R.drawable.heart_not_clicked)
+                  it.reference.delete()
+
+              } else {
+                  // Log.d("gg", "not exsist")
+                  likeBtn.setImageResource(R.drawable.heart_clicked)
+                  userRef.set(data)
+              }
+          }
+      }
+      operateLikeCounter(post,likeConter)*/
 }
 
 
+/*private fun operateLikeCounter(post: Post, likeConter: TextView) {
+    var counter = 0
+    FirebaseFirestore.getInstance().collection(USER_REF).get()
+        .addOnSuccessListener {
+            for (doc in it.documents) {
+                val currentId = doc.id.toString()
 
-
-
-
-
-
-
-
-
-
-
+                FirebaseFirestore.getInstance().collection(LIKES_REF).document(post.postId)
+                    .collection(currentId).document(SIMPLE_POST).get()
+                    .addOnSuccessListener {
+                        // Log.d("gg","currentId=$currentId, post.postId=${post.postId}")
+                        // Log.d("gg","it.exists()==>${it.exists()}")
+                        if (it.exists()) {
+                            counter++
+                            likeConter.text = "$counter Likes"
+                            // Log.d("gg","counter inside= $counter")
+                        } else {
+                            likeConter.text = "$counter Likes"
+                        }
+                    }
+            }
+        }
+}*/
 
 
 

@@ -13,6 +13,9 @@
         android:supportsRtl="false"
         android:theme="@style/Theme.Social55">
         <activity
+            android:name=".activities.ShowUsersActivity"
+            android:exported="false" />
+        <activity
             android:name=".activities.CommentsActivity"
             android:exported="false" />
         <activity

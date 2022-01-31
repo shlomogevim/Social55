@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
+import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -17,6 +18,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 import com.sg.social55.R
+import com.sg.social55.activities.ShowUsersActivity
 import com.sg.social55.adapters.MyImagesAdapter
 import com.sg.social55.model.Post
 import com.sg.social55.setting.AccountSettingActivity
@@ -35,14 +37,13 @@ class ProfileFragment : Fragment() {
 
     private var currentUserName: String = ""
     private var currentUserUid: String = ""
-    private var followingUserName = ""
-    private var followingUserId = ""
+    private var followUserName = ""
+    private var followUserId = ""
 
 
     var postList = ArrayList<Post>()
     var postListSave = ArrayList<Post>()
-    var mySaveImage: ArrayList<String>? = null
-
+    var mySaveImage = ArrayList<String>()
     private lateinit var adapter: MyImagesAdapter
     private lateinit var adapterSave: MyImagesAdapter
     private lateinit var recyclerViewUploadImage: RecyclerView
@@ -60,7 +61,6 @@ class ProfileFragment : Fragment() {
         currentUserName = FirebaseAuth.getInstance().currentUser?.displayName.toString()
 
 
-
         //recyclerView for uploadImage
 
         recyclerViewUploadImage = view.recycler_view_upload_pic
@@ -70,7 +70,7 @@ class ProfileFragment : Fragment() {
         adapter = MyImagesAdapter(postList)
         recyclerViewUploadImage.adapter = adapter
 
-         //recyclerview for saveImage
+        //recyclerview for saveImage
         recyclerViewSaveImage = view.recycler_view_saved_pic
         recyclerViewSaveImage.setHasFixedSize(true)
         val linearManager1 = GridLayoutManager(context, 3)
@@ -81,33 +81,53 @@ class ProfileFragment : Fragment() {
         recyclerViewSaveImage.visibility = View.GONE
         recyclerViewUploadImage.visibility = View.VISIBLE
 
-        var uploadImageBtn:ImageButton
-        uploadImageBtn=view.findViewById(R.id.images_grid_view_btn)
+        var uploadImageBtn: ImageButton
+        uploadImageBtn = view.findViewById(R.id.images_grid_view_btn)
         uploadImageBtn.setOnClickListener {
             recyclerViewSaveImage.visibility = View.GONE
             recyclerViewUploadImage.visibility = View.VISIBLE
         }
 
-        var saveImagesBtn:ImageButton
-        saveImagesBtn=view.findViewById(R.id.images_save_btn)
+        var folloingBtn: TextView
+        folloingBtn = view.findViewById(R.id.total_following)
+        folloingBtn.setOnClickListener {
+            val intent = Intent(context, ShowUsersActivity::class.java)
+            intent.putExtra(SHOW_USER_ID, followUserName)
+            intent.putExtra(SHOW_USER_TITLE, TITLE_FOLLOWING)
+            startActivity(intent)
+        }
+
+        var folloersBtn: TextView
+        folloersBtn = view.findViewById(R.id.total_followers)
+        folloersBtn.setOnClickListener {
+            val intent = Intent(context, ShowUsersActivity::class.java)
+            intent.putExtra(SHOW_USER_ID, followUserName)
+            intent.putExtra(SHOW_USER_TITLE, TITLE_FOLLOERS)
+            startActivity(intent)
+        }
+
+
+        var saveImagesBtn: ImageButton
+        saveImagesBtn = view.findViewById(R.id.images_save_btn)
         saveImagesBtn.setOnClickListener {
             recyclerViewSaveImage.visibility = View.VISIBLE
             recyclerViewUploadImage.visibility = View.GONE
-
         }
 
 
         val pref = context?.getSharedPreferences(SHARPREF_REF, Context.MODE_PRIVATE)
         if (pref != null) {
-            followingUserName = pref.getString(PUBLISHER_EXSTRA, "none").toString()
-            followingUserId = pref.getString(PROFILE_ID_EXSTRA, "none").toString()
+            followUserName = pref.getString(PUBLISHER_EXSTRA, "none").toString()
+            followUserId = pref.getString(PROFILE_ID_EXSTRA, "none").toString()
         }
 
-        if (followingUserName == currentUserName) {
+        if (followUserName == currentUserName) {
             view.edit_account_settings_btn.text = "Edit Profile"
         } else {
             checkFollowAndFollowingBtnStatus()
         }
+
+
 
         view.edit_account_settings_btn.setOnClickListener {
             val getBtnText = view.edit_account_settings_btn.text.toString()
@@ -117,24 +137,24 @@ class ProfileFragment : Fragment() {
                     val data = HashMap<String, Any>()
                     data.put("bol", true)
                     FirebaseFirestore.getInstance().collection(FOLLOW_REF).document(currentUserName)
-                        .collection(FOLLOWING_REF).document(followingUserName)
+                        .collection(FOLLOWING_REF).document(followUserName)
                         .set(data) //current follow after  user
                         .addOnSuccessListener {
                             view.edit_account_settings_btn.text = "Following"
                             FirebaseFirestore.getInstance().collection(FOLLOW_REF)
-                                .document(followingUserName)
+                                .document(followUserName)
                                 .collection(FOLLOWER_REF).document(currentUserName)
                                 .set(data)     //user being follow by current
                         }
                 }
                 "Following" -> {
                     FirebaseFirestore.getInstance().collection(FOLLOW_REF).document(currentUserName)
-                        .collection(FOLLOWING_REF).document(followingUserName)
+                        .collection(FOLLOWING_REF).document(followUserName)
                         .delete()//current follow after  user
                         .addOnSuccessListener {
                             view.edit_account_settings_btn.text = "Follow"
                             FirebaseFirestore.getInstance().collection(FOLLOW_REF)
-                                .document(followingUserName)
+                                .document(followUserName)
                                 .collection(FOLLOWER_REF).document(currentUserName)
                                 .delete()     //user being follow by current
                         }
@@ -179,17 +199,17 @@ class ProfileFragment : Fragment() {
                         }
                     }
                 }
-            //   util.logi("ProfileFragment/readSave  -postListSave.size=${postListSave.size}")
-             adapterSave.notifyDataSetChanged()
+                //   util.logi("ProfileFragment/readSave  -postListSave.size=${postListSave.size}")
+                adapterSave.notifyDataSetChanged()
             }
         }
     }
 
     private fun checkFollowAndFollowingBtnStatus() {
-        //util.logi(FOLLOW_REF,currentUserName,FOLLOWING_REF,followingUserName)
+        //util.logi(FOLLOW_REF,currentUserName,FOLLOWING_REF,followUserName)
 
         FirebaseFirestore.getInstance().collection(FOLLOW_REF)
-            .document(currentUserName).collection(FOLLOWING_REF).document(followingUserName).get()
+            .document(currentUserName).collection(FOLLOWING_REF).document(followUserName).get()
             .addOnSuccessListener {
                 if (it.exists()) {
                     edit_account_settings_btn.text = "Following"
@@ -202,7 +222,7 @@ class ProfileFragment : Fragment() {
     }
 
     private fun getFollower() {
-        FirebaseFirestore.getInstance().collection(FOLLOW_REF).document(followingUserName)
+        FirebaseFirestore.getInstance().collection(FOLLOW_REF).document(followUserName)
             .collection(FOLLOWER_REF).get()
             .addOnSuccessListener {
                 total_followers.text = it.count().toString()
@@ -212,7 +232,7 @@ class ProfileFragment : Fragment() {
     }
 
     private fun getFollowings() {
-        FirebaseFirestore.getInstance().collection(FOLLOW_REF).document(followingUserName)
+        FirebaseFirestore.getInstance().collection(FOLLOW_REF).document(followUserName)
             .collection(FOLLOWING_REF).get()
             .addOnSuccessListener {
                 total_following.text = it.count().toString()
@@ -228,19 +248,19 @@ class ProfileFragment : Fragment() {
             if (value != null) {
                 for (doc in value.documents) {
                     val post = util.covertYoPost(doc)
-                    if (post.publisher == followingUserName) {
+                    if (post.publisher == followUserName) {
                         postList.add(post)
                     }
                 }
                 Collections.reverse(postList)
                 //   util.logi("in ProfileFragment  postList.size= ${postList.size}")
-            adapter.notifyDataSetChanged()
+                adapter.notifyDataSetChanged()
             }
         }
     }
 
     private fun userInfo() {
-        FirebaseFirestore.getInstance().collection(USER_REF).document(followingUserId).get()
+        FirebaseFirestore.getInstance().collection(USER_REF).document(followUserId).get()
             .addOnSuccessListener {
                 val data = it.data
                 if (data != null) {
@@ -256,7 +276,7 @@ class ProfileFragment : Fragment() {
                     val bio = data[USER_BIO] as String
                     view?.bio_profile_fragment?.text = bio
 
-                    val mainString = "Current:$currentUserName         following:$followingUserName"
+                    val mainString = "Current:$currentUserName         following:$followUserName"
                     //  val mainString = "Current:$currentUserName  "
                     view?.profile_fragment_username?.text = mainString
                 }
@@ -268,21 +288,21 @@ class ProfileFragment : Fragment() {
     override fun onStop() {
         super.onStop()
         val pref = context?.getSharedPreferences("PREFS", Context.MODE_PRIVATE)?.edit()
-        pref?.putString("userName", followingUserName)
+        pref?.putString("userName", followUserName)
         pref?.apply()
     }
 
     override fun onPause() {
         super.onPause()
         val pref = context?.getSharedPreferences("PREFS", Context.MODE_PRIVATE)?.edit()
-        pref?.putString("userName", followingUserName)
+        pref?.putString("userName", followUserName)
         pref?.apply()
     }
 
     override fun onDestroy() {
         super.onDestroy()
         val pref = context?.getSharedPreferences("PREFS", Context.MODE_PRIVATE)?.edit()
-        pref?.putString("userName", followingUserName)
+        pref?.putString("userName", followUserName)
         pref?.apply()
     }
 
@@ -292,7 +312,7 @@ class ProfileFragment : Fragment() {
             if (value != null) {
                 for (doc in value.documents) {
                     val post = util.covertYoPost(doc)
-                    if (post.postPublisherId == followingUserId) {
+                    if (post.postPublisherId == followUserId) {
                         counter++
                     }
                 }
@@ -339,8 +359,8 @@ class ProfileFragment : Fragment() {
 
     private var currentUserName: String = ""
     private var currentUserUid: String = ""
-    private  var followingUserName=""
-    private  var followingUserId=""
+    private  var followUserName=""
+    private  var followUserId=""
 
     var postList = ArrayList<Post>()
     var postListSave = ArrayList<Post>()
@@ -381,13 +401,13 @@ class ProfileFragment : Fragment() {
         val pref = context?.getSharedPreferences("PREFS", Context.MODE_PRIVATE)
         if (pref != null) {
 
-            followingUserName = pref.getString(PUBLISHER_EXSTRA, "none").toString()
-            followingUserId=pref.getString(PROFILE_ID_EXSTRA,"none").toString()
+            followUserName = pref.getString(PUBLISHER_EXSTRA, "none").toString()
+            followUserId=pref.getString(PROFILE_ID_EXSTRA,"none").toString()
 
         }
 
 
-        if (followingUserName == currentUserName) {
+        if (followUserName == currentUserName) {
             view.edit_account_settings_btn.text = "Edit Profile"
         } else {
             checkFollowAndFollowingBtnStatus()
@@ -404,24 +424,24 @@ class ProfileFragment : Fragment() {
                     val data = HashMap<String, Any>()
                     data.put("bol", true)
                     FirebaseFirestore.getInstance().collection(FOLLOW_REF).document(currentUserName)
-                        .collection(FOLLOWING_REF).document(followingUserName)
+                        .collection(FOLLOWING_REF).document(followUserName)
                         .set(data) //current follow after  user
                         .addOnSuccessListener {
                             view.edit_account_settings_btn.text = "Following"
                             FirebaseFirestore.getInstance().collection(FOLLOW_REF)
-                                .document(followingUserName)
+                                .document(followUserName)
                                 .collection(FOLLOWER_REF).document(currentUserName)
                                 .set(data)     //user being follow by current
                         }
                 }
                 "Following" -> {
                     FirebaseFirestore.getInstance().collection(FOLLOW_REF).document(currentUserName)
-                        .collection(FOLLOWING_REF).document(followingUserName)
+                        .collection(FOLLOWING_REF).document(followUserName)
                         .delete()//current follow after  user
                         .addOnSuccessListener {
                             view.edit_account_settings_btn.text = "Follow"
                             FirebaseFirestore.getInstance().collection(FOLLOW_REF)
-                                .document(followingUserName)
+                                .document(followUserName)
                                 .collection(FOLLOWER_REF).document(currentUserName)
                                 .delete()     //user being follow by current
                         }
@@ -476,10 +496,10 @@ class ProfileFragment : Fragment() {
     }
 
     private fun checkFollowAndFollowingBtnStatus() {
-       //util.logi(FOLLOW_REF,currentUserName,FOLLOWING_REF,followingUserName)
+       //util.logi(FOLLOW_REF,currentUserName,FOLLOWING_REF,followUserName)
 
         FirebaseFirestore.getInstance().collection(FOLLOW_REF)
-            .document(currentUserName).collection(FOLLOWING_REF).document(followingUserName).get()
+            .document(currentUserName).collection(FOLLOWING_REF).document(followUserName).get()
             .addOnSuccessListener {
                 if (it.exists()) {
                     edit_account_settings_btn.text = "Following"
@@ -492,7 +512,7 @@ class ProfileFragment : Fragment() {
     }
 
     private fun getFollower() {
-        FirebaseFirestore.getInstance().collection(FOLLOW_REF).document(followingUserName)
+        FirebaseFirestore.getInstance().collection(FOLLOW_REF).document(followUserName)
             .collection(FOLLOWER_REF).get()
             .addOnSuccessListener {
                 total_followers.text = it.count().toString()
@@ -502,7 +522,7 @@ class ProfileFragment : Fragment() {
     }
 
     private fun getFollowings() {
-        FirebaseFirestore.getInstance().collection(FOLLOW_REF).document(followingUserName)
+        FirebaseFirestore.getInstance().collection(FOLLOW_REF).document(followUserName)
             .collection(FOLLOWING_REF).get()
             .addOnSuccessListener {
                 total_following.text = it.count().toString()
@@ -518,7 +538,7 @@ class ProfileFragment : Fragment() {
             if (value != null) {
                 for (doc in value.documents) {
                     val post = util.covertYoPost(doc)
-                   if (post.publisher == followingUserName) {
+                   if (post.publisher == followUserName) {
                         postList.add(post)
                     }
                 }
@@ -529,7 +549,7 @@ class ProfileFragment : Fragment() {
     }
 
     private fun userInfo() {
-        FirebaseFirestore.getInstance().collection(USER_REF).document(followingUserId).get()
+        FirebaseFirestore.getInstance().collection(USER_REF).document(followUserId).get()
             .addOnSuccessListener {
                 val data = it.data
                 if (data != null) {
@@ -545,7 +565,7 @@ class ProfileFragment : Fragment() {
                     val bio = data[USER_BIO] as String
                     view?.bio_profile_fragment?.text = bio
 
-                     val mainString = "Current:$currentUserName         following:$followingUserName"
+                     val mainString = "Current:$currentUserName         following:$followUserName"
                   //  val mainString = "Current:$currentUserName  "
                     view?.profile_fragment_username?.text = mainString
                 }
@@ -557,21 +577,21 @@ class ProfileFragment : Fragment() {
     override fun onStop() {
         super.onStop()
         val pref = context?.getSharedPreferences("PREFS", Context.MODE_PRIVATE)?.edit()
-        pref?.putString("userName", followingUserName)
+        pref?.putString("userName", followUserName)
         pref?.apply()
     }
 
     override fun onPause() {
         super.onPause()
         val pref = context?.getSharedPreferences("PREFS", Context.MODE_PRIVATE)?.edit()
-        pref?.putString("userName", followingUserName)
+        pref?.putString("userName", followUserName)
         pref?.apply()
     }
 
     override fun onDestroy() {
         super.onDestroy()
         val pref = context?.getSharedPreferences("PREFS", Context.MODE_PRIVATE)?.edit()
-        pref?.putString("userName", followingUserName)
+        pref?.putString("userName", followUserName)
         pref?.apply()
     }
     private fun getTotalNumOfPost(){
@@ -580,7 +600,7 @@ class ProfileFragment : Fragment() {
             if (value != null) {
                 for (doc in value.documents){
                     val post=util.covertYoPost(doc)
-                    if (post.postPublisherId==followingUserId) {
+                    if (post.postPublisherId==followUserId) {
                         counter++
                     }
                 }
