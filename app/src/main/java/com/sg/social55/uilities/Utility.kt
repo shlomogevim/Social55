@@ -8,49 +8,15 @@ import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.sg.social55.R
 import com.sg.social55.model.Comment
+import com.sg.social55.model.Notification
 import com.sg.social55.model.Post
 import com.sg.social55.model.User
 
 class Utility {
 
-    val currentUser = FirebaseAuth.getInstance().currentUser
     val currentUserUid = FirebaseAuth.getInstance().currentUser?.uid.toString()
-    fun logi(
-        element1: String,
-        element2: String = "",
-        element3: String = "",
-        element4: String = ""
-    ) {
-        if (element1 != "" && element2 == "" && element3 == "" && element4 == "") {
-            Log.d("gg", "${element1}")
-        }
-        if (element1 != "" && element2 != "" && element3 == "" && element4 == "") {
-            Log.d("gg", "${element1} ,${element2}")
-        }
-        if (element1 != "" && element2 != "" && element3 != "" && element4 == "") {
-            Log.d("gg", "${element1} ,${element2} ,${element3}")
-        }
-        if (element1 != "" && element2 != "" && element3 != "" && element4 != "") {
-            Log.d("gg", "${element1} ,${element2} ${element3},${element4}")
-        }
+    val currentUserName = FirebaseAuth.getInstance().currentUser?.displayName.toString()
 
-        /*     if (element1 != "" && element2 == "" && element3 == "" && element4 == "") {
-                 Log.d("gg", " element1=${element1}")
-             }
-             if (element1 != "" && element2 != "" && element3 == "" && element4 == "") {
-                 Log.d("gg", " element1=${element1} , element2=${element2}")
-             }
-
-             if (element1 != "" && element2 != "" && element3 != "" && element4 == "") {
-                 Log.d("gg", " element1=${element1} ,element2=${element2} ,element3=${element3}")
-             }
-             if (element1 != "" && element2 != "" && element3 != "" && element4 != "") {
-                 Log.d(
-                     "gg",
-                     " element1=${element1} ,element2=${element2} ,element3=${element3} ,element4=${element4}"
-                 )
-             }*/
-    }
 
     fun convertToUser(snap: DocumentSnapshot?): User {
         var userName = "no userName"
@@ -65,12 +31,40 @@ class Utility {
         email = snap?.getString(USER_EMAIL).toString()
         profileImage = snap?.getString(USER_IMAGE).toString()
         dio = snap?.getString(USER_BIO).toString()
-        uid = snap?.getString(USER_UID).toString()
+        uid = snap?.getString(FIRESTORE_USER_ID).toString()
 
         val newUser = User(userName, fullName, email, profileImage, dio, uid)
         return newUser
     }
 
+  fun findUser(id: String): User {
+        var user = User()
+        FirebaseFirestore.getInstance().collection(USER_REF).document(id).get()
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    user = convertToUser(task.result)
+                }
+            }
+
+        return user
+    }
+
+  /*  suspend fun getFirstValue() :Int {
+        //delay(1000L)
+        val value= Random.nextInt(1000)
+        logi(" Rturn first num : $value")
+        return  value
+    }*/
+
+
+    /*  fun findUser(id:String):User{
+        var user=User()
+    FirebaseFirestore.getInstance().collection(USER_REF).document(id).get()
+    .addOnSuccessListener {
+         user =convertToUser(it)
+         }
+       return user
+    }*/
     fun covertYoPost(snap: DocumentSnapshot?): Post {
         var postId = "No postId"
         var postImage: String =
@@ -86,93 +80,28 @@ class Utility {
         publisher = snap?.getString(POST_PUBLISHER).toString()
         publisherId = snap?.getString(POST_PUBLISHER_ID).toString()
         description = snap?.getString(POST_DISCTIPTION).toString()
-
-
-        // Log.d("gg","postId=$postId,publisger=$publisher,description=$description")
-
         likeNumber = snap?.getString(POST_LIKECOUNTER).toString()
+
+
+       // logi("Utility || postId=$postId,postImage=?postImage,publisger=$publisher,publisherId=publisherId,description=$description,likeNumber=$likeNumber")
+
+
 
         val newPost = Post(postId, postImage, publisher, description, publisherId, likeNumber)
         return newPost
     }
 
-    fun convertToComment(snap: DocumentSnapshot?): Comment {
-        val text = snap?.getString(COMMENT_TEXT).toString()
-        val publisher = snap?.getString(COMMENT_PUBLISHER_USERNAME).toString()
-        return Comment(text, publisher)
+    fun findPost(id: String): Post {
+        var post = Post()
+        FirebaseFirestore.getInstance().collection(POSTS_REF).document(id).get()
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    post = covertYoPost(task.result)
+                }
+            }
+        return post
     }
 
-    /* fun operateLikeCounter(postId: String, likesCounter: TextView) {
-         var counter = 0
-         FirebaseFirestore.getInstance().collection(USER_REF).get()
-             .addOnSuccessListener {
-                 for (doc in it.documents) {
-                     val currentId = doc.id.toString()
-                     FirebaseFirestore.getInstance().collection(LIKES_REF).document(postId)
-                         .collection(currentId).document(SIMPLE_POST).get()
-                         .addOnSuccessListener {
-                             if (it.exists()) {
-                                 counter++
-                                 likesCounter.text = counter.toString() + " Likes"
-                             } else {
-                                 likesCounter.text = counter.toString() + " Likes"
-                             }
-                         }
-                 }
-             }
-     }*/
-
-
-    /* fun isLikes(postId: String, likeBtn: ImageView) {
-         val currentUserUid = FirebaseAuth.getInstance().currentUser?.uid.toString()
-         FirebaseFirestore.getInstance().collection(LIKES_REF)
-             .document(postId).collection(currentUserUid).document(SIMPLE_POST)
-             .get().addOnSuccessListener {
-                 if (it.exists()) {
-                     likeBtn.setImageResource(R.drawable.heart_clicked)
-                     likeBtn.tag = LIKE_TAG
-                 } else
-                     likeBtn.setImageResource(R.drawable.heart_not_clicked)
-                 likeBtn.tag = NOT_LIKE_TAG
-             }
-     }*/
-
-    /*  fun operateLikeCounterNew(postId: String, likesCounter: TextView) {
-          var counter = 0
-          FirebaseFirestore.getInstance().collection(USER_REF).get()
-              .addOnSuccessListener {
-                  for (doc in it.documents) {
-                      val currentId = doc.id.toString()
-                      FirebaseFirestore.getInstance().collection(LIKES_REF_NEW).document(postId)
-                          .collection(USERS).document(currentId)
-                          .collection(SIMPLE_ITEM) .document(BOL) .get()
-                          .addOnSuccessListener {
-                              if (it.exists()) {
-                                  counter++
-                                  likesCounter.text = counter.toString() + " Likes"
-                              } else {
-                                  likesCounter.text = counter.toString() + " Likes"
-                              }
-                          }
-                  }
-              }
-      }*/
-
-
-    /* fun isLikesNew(postId: String, likeBtn: ImageView) {
-         FirebaseFirestore.getInstance().collection(LIKES_REF_NEW).document(postId)
-             .collection(USERS).document(currentUserUid)
-             .collection(SIMPLE_ITEM).document(BOL).get()
-             .addOnSuccessListener {
-                 if (it.exists()) {
-                     likeBtn.setImageResource(R.drawable.heart_clicked)
-                     likeBtn.tag = LIKE_TAG
-                 } else {
-                     likeBtn.setImageResource(R.drawable.heart_not_clicked)
-                     likeBtn.tag = NOT_LIKE_TAG
-                 }
-             }
-     }*/
 
     fun operateLikeCounterNew(postId: String, likesCounter: TextView) {
         var counter = 0
@@ -182,7 +111,7 @@ class Utility {
                     val currentId = doc.id
                     //   logi("currentId=$currentId , postId=$postId")
                     FirebaseFirestore.getInstance().collection(LIKES_REF_NEW).document(postId)
-                        .collection(USERS).document(currentId)
+                        .collection(USERS_ID).document(currentId)
                         .collection(SIMPLE_ITEM).addSnapshotListener { value, error ->
                             if (value != null) {
                                 //  logi("currentId11=$currentId , postId=$postId, value.documents.size=${value.documents.size}")
@@ -201,7 +130,7 @@ class Utility {
 
     fun likeBtn_Indicator(postId: String, likeBtn: ImageView, likeCounter: TextView) {
         FirebaseFirestore.getInstance().collection(LIKES_REF_NEW).document(postId)
-            .collection(USERS).document(currentUserUid)
+            .collection(USERS_ID).document(currentUserUid)
             .collection(SIMPLE_ITEM).addSnapshotListener { value, error ->
                 if (value != null) {
                     if (value.documents.size > 0) {
@@ -219,12 +148,14 @@ class Utility {
     fun likeBtn_Press(post: Post, likeBtn: ImageView) {
         val data = simpleData()
         val ref = FirebaseFirestore.getInstance().collection(LIKES_REF_NEW).document(post.postId)
-            .collection(USERS).document(currentUserUid)
+            .collection(USERS_ID).document(currentUserUid)
             .collection(SIMPLE_ITEM)
         ref.document(BOL).get()
             .addOnSuccessListener {
                 if (it.exists()) {
                     likeBtn.setImageResource(R.drawable.heart_not_clicked)
+                    //    addNotification(post.postPublisherId,post.postId)
+                    addPostNotification(post)
                     it.reference.delete()
                 } else {
                     likeBtn.setImageResource(R.drawable.heart_clicked)
@@ -233,6 +164,27 @@ class Utility {
             }
     }
 
+    private fun addPostNotification(post: Post) {
+        val data = HashMap<String, Any>()
+        data[NOTIFICATION_USER_ID] =currentUserUid
+        data[NOTIFICATION_TEXT] = "like your post "
+        data[NOTIFICATION_POST_ID] = post.postId
+        data[NOTIFICATION_IS_POST] = NOTIFICATION_ISPOST_TRUE
+        FirebaseFirestore.getInstance()
+            .collection(NOTIFICATION_REF) .document(post.postPublisherId)
+            .collection(NOTIFICATION_LIST) . add(data)
+ //logi("Utility || NOTIFICATION_REF11=$NOTIFICATION_REF ,post.postPublisherId=${post.postPublisherId}, post.postId=${post.postId}")
+    }
+
+     fun addUserNotification(user:User) {
+        val data = HashMap<String, Any>()
+        data[NOTIFICATION_USER_ID] =user.uid
+         data[NOTIFICATION_TEXT] = "start following you "
+         data[NOTIFICATION_POST_ID] = "No Post"
+         data[NOTIFICATION_IS_POST] = NOTIFICATION_ISPOST_FALSE
+        FirebaseFirestore.getInstance().collection(NOTIFICATION_REF)
+            .document(currentUserUid).collection(NOTIFICATION_LIST).add(data)
+    }
     fun simpleData(): HashMap<String, Any> {
         val data = HashMap<String, Any>()
         data["Bol"] = "Exist"
@@ -240,30 +192,65 @@ class Utility {
     }
 
 
-    fun addNewComment(addComment: TextView, postId: String) {
-        val data = HashMap<String, Any>()
-        data[COMMENT_TEXT] = addComment.text.toString()
-        data[COMMENT_PUBLISHER_USERNAME] = currentUser?.displayName.toString()
-
-        FirebaseFirestore.getInstance().collection(COMMENT_REF).document("postId-" + postId)
-            .collection(COMMENT_DOC).add(data)
-
-
+    fun convertToNotification(snap: DocumentSnapshot?): Notification {
+        val userId = snap?.getString(NOTIFICATION_USER_ID).toString()
+        val text = snap?.getString(NOTIFICATION_TEXT).toString()
+        val postId = snap?.getString(NOTIFICATION_POST_ID).toString()
+        val isPost = snap?.getString(NOTIFICATION_IS_POST).toString()
+        val newNotification = Notification(userId,  text, postId, isPost)
+        return newNotification
     }
 
+    fun convertToComment(snap: DocumentSnapshot?): Comment {
+        val text = snap?.getString(COMMENT_TEXT).toString()
+        val publisher = snap?.getString(COMMENT_PUBLISHER).toString()
+        val publisherId = snap?.getString(COMMENT_PUBLISHER_ID).toString()
+        return Comment(text, publisher, publisherId)
+    }
+
+    fun addComment(addComment: TextView, postId: String, publisher: String, publisherI: String) {
+        //               (binding.addComment, postId, publisher,publisherId)
+        val data = HashMap<String, Any>()
+        data[COMMENT_TEXT] = addComment.text.toString()
+        data[COMMENT_PUBLISHER] = publisher
+        data[COMMENT_PUBLISHER_ID] = publisherI
+        FirebaseFirestore.getInstance().collection(COMMENT_REF).document(postId)
+            .collection(COMMENT_DOC).add(data)
+    }
 
     fun commentsCounter(post: Post, comments: TextView) {
-        val st = "postId-" + post.postId
         var counter = 0
-        FirebaseFirestore.getInstance().collection(COMMENT_REF).document(st)
+        FirebaseFirestore.getInstance().collection(COMMENT_REF).document(post.postId)
             .collection(COMMENT_DOC)
             .addSnapshotListener { value, error ->
                 if (value != null) {
                     counter = value.documents.size
                     comments.text = "view all the $counter comments"
                 }
-
             }
     }
 
+    fun logi(
+        element1: String,
+        element2: String = "",
+        element3: String = "",
+        element4: String = ""
+    ) {
+        if (element1 != "" && element2 == "" && element3 == "" && element4 == "") {
+            Log.d("gg", "${element1}")
+        }
+        if (element1 != "" && element2 != "" && element3 == "" && element4 == "") {
+            Log.d("gg", "${element1} ,${element2}")
+        }
+        if (element1 != "" && element2 != "" && element3 != "" && element4 == "") {
+            Log.d("gg", "${element1} ,${element2} ,${element3}")
+        }
+        if (element1 != "" && element2 != "" && element3 != "" && element4 != "") {
+            Log.d("gg", "${element1} ,${element2} ${element3},${element4}")
+        }
+    }
+
+    fun seePost(post: Post) {
+        logi("postId=${post.postId},publisher=${post.publisher},postPublisherId=${post.postPublisherId},description=${post.description}")
+    }
 }

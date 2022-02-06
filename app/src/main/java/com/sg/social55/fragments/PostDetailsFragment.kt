@@ -46,14 +46,8 @@ class PostDetailsFragment : Fragment() {
 
         }
         retrivePost()
-
-
-
         return view
     }
-
-
-
 
     private fun retrivePost() {
         postList.clear()
@@ -61,10 +55,7 @@ class PostDetailsFragment : Fragment() {
             .addOnSuccessListener {
                 val post = util.covertYoPost(it)
                 postList.add(post)
-
                 postAdapter.notifyDataSetChanged()
-
             }
-
     }
 }

@@ -84,7 +84,7 @@ class SignUpActivity : AppCompatActivity() {
     private fun saveUserInfo(fullName: String, userName: String, email: String,password:String) {
         val data=HashMap<String,Any>()
         val uid = FirebaseAuth.getInstance().currentUser?.uid
-        data[USER_UID] = uid!!
+        data[USER_ID] = uid!!
         data[USER_FULLNAME] = fullName.lowercase(Locale.getDefault())
         data[USER_USERNAME] = userName.lowercase(Locale.getDefault())
         data[USER_EMAIL] = email

@@ -22,9 +22,13 @@ import com.sg.social55.fragments.ProfileFragment
 import com.sg.social55.uilities.*
 
 class UserAdapter(val users: List<User>, var isFragment: Boolean = false) :
-    RecyclerView.Adapter<UserAdapter.ViewHolder>() {
 
+
+    RecyclerView.Adapter<UserAdapter.ViewHolder>() {
+    val util = Utility()
     private var currentUser: FirebaseUser? = FirebaseAuth.getInstance().currentUser
+    private var currentUserUid = FirebaseAuth.getInstance().currentUser?.uid.toString()
+    private var currentUserName = FirebaseAuth.getInstance().currentUser?.displayName.toString()
     private lateinit var context: Context
 
 
@@ -63,6 +67,7 @@ class UserAdapter(val users: List<User>, var isFragment: Boolean = false) :
             followButton.setOnClickListener {
                 if (followButton.text == "Follow") {
                     followToFollowing(user)
+                    util.addUserNotification(user)
                 } else {
                     followingToFollow(user)
                 }
@@ -72,7 +77,7 @@ class UserAdapter(val users: List<User>, var isFragment: Boolean = false) :
             itemView.setOnClickListener {
                 if (isFragment) {
                     val pref = context.getSharedPreferences("PREFS", Context.MODE_PRIVATE).edit()
-                    pref.putString(USER_IDEXSRTA,user.uid)
+                    pref.putString(USER_IDEXSRTA, user.uid)
                     pref.putString(USER_USERNAMEEXSRTA, user.userName)
                     pref.apply()
                     (context as FragmentActivity).supportFragmentManager.beginTransaction()
@@ -84,6 +89,7 @@ class UserAdapter(val users: List<User>, var isFragment: Boolean = false) :
                 }
             }
         }
+
         private fun followToFollowing(user: User) {
             val data = HashMap<String, Any>()
             data["bol"] = true
@@ -126,7 +132,30 @@ class UserAdapter(val users: List<User>, var isFragment: Boolean = false) :
                 }
 
         }
-
     }
 }
+
+ /*   private fun addNotification(user:User) {
+        val data = HashMap<String, Any>()
+        data[NOTIFICATION_PUBLISERID] =user.uid
+        data[NOTIFICATION_PUBLISERNAME] =user.userName
+        data[POST_PUBLISERID] = currentUserUid
+        data[POST_PUBLISERNAME] =currentUserName
+        data[NOTIFICATION_TEXT] = "start following you "
+        data[NOTIFICATION_POSTID] =""
+        data[NOTIFICATION_ISPOST] = NOTIFICATION_ISPOST_FALSE
+
+        FirebaseFirestore.getInstance().collection(NOTIFICATION_REF)
+            .document(POST_PUBLISHER_ID).collection(NOTIFICATION_LIST).add(data)
+    }
+}*/
+/*const val NOTIFICATION_PUBLISERID="notification_pablisherId"
+const val NOTIFICATION_PUBLISERNAME="notification_pablisherName"
+const val POST_PUBLISERID="post_pablisherId"
+const val POST_PUBLISERNAME="post_pablisherName"
+const val NOTIFICATION_POSTID="notification_postid"
+const val NOTIFICATION_TEXT="notification_text"
+const val NOTIFICATION_ISPOST="notification_post_or_no"
+const val NOTIFICATION_ISPOST_TRUE="Its post"
+const val NOTIFICATION_ISPOST_FALSE="Its not post"*/
 

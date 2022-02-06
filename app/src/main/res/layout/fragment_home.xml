@@ -23,6 +23,16 @@
                     android:layout_height="50dp"
                     android:src="@drawable/instagram"
                     android:layout_alignParentLeft="true"/>
+
+                <TextView
+                    android:id="@+id/currentUserTV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="120dp"
+                    android:layout_marginTop="10dp"
+                    android:textStyle="italic"
+                    android:text="Current User"
+                    android:textSize="16sp" />
                 <ImageView
                     android:layout_width="100dp"
                     android:layout_height="28dp"

@@ -30,7 +30,8 @@ class PostAdapter(
     private lateinit var context: Context
     private val util = Utility()
     private val simpleData = HashMap<String, Any>()
-    private val currentUid = FirebaseAuth.getInstance().currentUser!!.uid
+    private val currentUserUid = FirebaseAuth.getInstance().currentUser!!.uid
+    private val currentUidName = FirebaseAuth.getInstance().currentUser!!.displayName
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -54,11 +55,10 @@ class PostAdapter(
         val commentButton = itemView?.findViewById<ImageView>(R.id.post_image_comment_btn)
         val saveButton = itemView?.findViewById<ImageView>(R.id.post_save_comment_btn)
         val userName = itemView?.findViewById<TextView>(R.id.user_name_post)
-        val likesCounter = itemView?.findViewById<TextView>(R.id.likesCounter)
+        val likesCounter = itemView?.findViewById<Button>(R.id.likesCounter)
         val publisher = itemView?.findViewById<TextView>(R.id.publisher)
         val description = itemView?.findViewById<TextView>(R.id.description)
         val commentCounter = itemView?.findViewById<TextView>(R.id.comments)
-
 
 
         fun bindPost(post: Post) {
@@ -75,14 +75,14 @@ class PostAdapter(
                     publisher.text = "Bublisher: " + user.fullName
                     description.text = "Decription: " + post.description
                 }
-          //checkSaveStatus(post.postId, saveButton, keyBTnSetuatin)
-          checkSaveStatus(post.postId, saveButton)
+            //checkSaveStatus(post.postId, saveButton, keyBTnSetuatin)
+            checkSaveStatus(post.postId, saveButton)
             //util.isLikes(post.postId, likeBtn)
-            util.likeBtn_Indicator(post.postId, likeBtn,likesCounter)
+            util.likeBtn_Indicator(post.postId, likeBtn, likesCounter)
             util.operateLikeCounterNew(post.postId, likesCounter)
             util.commentsCounter(post, commentCounter)
 
-           operatePressButton(post, saveButton)
+            operatePressButton(post, saveButton)
         }
 
 
@@ -90,16 +90,22 @@ class PostAdapter(
 
             profileImage.setOnClickListener {
                 val editor = context.getSharedPreferences(SHARPREF_REF, Context.MODE_PRIVATE).edit()
-                editor.putString(PROFILE_ID_EXSTRA, post.postPublisherId)
-                editor.putString(PUBLISHER_EXSTRA, post.publisher)
-                editor.apply()
-                (context as FragmentActivity).supportFragmentManager.beginTransaction()
-                    .replace(R.id.fragment_container, ProfileFragment()).commit()
+                val publisher = post.publisher
+                val publisherId = post.postPublisherId
+
+                if ((!publisher.isNullOrEmpty() && (!publisherId.isNullOrEmpty()))) {
+                    editor.putString(POST_PUBLISHER, publisher)
+                    editor.putString(POST_PUBLISHER_ID, publisherId)
+                    editor.apply()
+                    (context as FragmentActivity).supportFragmentManager.beginTransaction()
+                        .replace(R.id.fragment_container, ProfileFragment()).commit()
+                }
             }
             commentButton.setOnClickListener {
                 val intentComment = Intent(context, CommentsActivity::class.java)
-                intentComment.putExtra(POST_ID_EXSTRA, post.postId)
-                intentComment.putExtra(USER_USERNAMEEXSRTA, post.postPublisherId)
+                intentComment.putExtra(COMMENT_POST_ID, post.postId)
+                intentComment.putExtra(COMMENT_PUBLISHER, currentUidName)
+                intentComment.putExtra(COMMENT_PUBLISHER_ID, currentUserUid)
                 context.startActivity(intentComment)
 
             }
@@ -108,43 +114,42 @@ class PostAdapter(
             }
 
             likesCounter.setOnClickListener {
-                val intent=Intent(context, ShowUsersActivity::class.java)
-                intent.putExtra(SHOW_USER_ID,post.postId)
+                val intent = Intent(context, ShowUsersActivity::class.java)
+                intent.putExtra(POST_ID, post.postId)
                 intent.putExtra(SHOW_USER_TITLE, TITLE_LIKES)
                 context.startActivity(intent)
             }
 
             commentCounter.setOnClickListener {
                 val intent = Intent(context, CommentsActivity::class.java)
-                intent.putExtra(POST_ID_EXSTRA, post.postId)
+                intent.putExtra(COMMENT_POST_ID, post.postId)
                 context.startActivity(intent)
             }
 
             saveButton.setOnClickListener {
-               // util.logi("inside saveButtun 1 saveButton.tag=${saveButton.tag}")
+                // util.logi("inside saveButtun 1 saveButton.tag=${saveButton.tag}")
                 if (saveButton.tag == SAVE_EXSIST) {
                     saveButton.tag = SAVE_NOT_EXSIST
                     saveButton.setImageResource(R.drawable.save_unfilled_large_icon)
                     FirebaseFirestore.getInstance()
-                        .collection(SAVE_REF).document(currentUid)
-                      //  .collection("PostId").document(post.postId).delete()
+                        .collection(SAVE_REF).document(currentUserUid)
+                        //  .collection("PostId").document(post.postId).delete()
                         .collection(POSTID_COLLECTION).document(post.postId).delete()
 
                 } else {
                     FirebaseFirestore.getInstance()
-                        .collection(SAVE_REF).document(currentUid)
-                    //    .collection("PostId").document(post.postId).set(simpleData)
+                        .collection(SAVE_REF).document(currentUserUid)
+                        //    .collection("PostId").document(post.postId).set(simpleData)
                         .collection(POSTID_COLLECTION).document(post.postId).set(simpleData)
                 }
 
             }
 
-
         }
 
         private fun checkSaveStatus(postId: String, imageView: ImageView) {
-            FirebaseFirestore.getInstance().collection(SAVE_REF).document(currentUid)
-              //  .collection("PostId").document(postId)
+            FirebaseFirestore.getInstance().collection(SAVE_REF).document(currentUserUid)
+                //  .collection("PostId").document(postId)
                 .collection(POSTID_COLLECTION).document(postId)
                 .addSnapshotListener { value, error ->
 

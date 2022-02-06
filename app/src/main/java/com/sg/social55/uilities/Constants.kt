@@ -1,7 +1,8 @@
 package com.sg.social55.uilities
 
 const val USER_REF="users"
-const val USER_UID="user uid"
+const val FIRESTORE_USER_ID="user uid"
+const val USER_ID="userId"
 const val USER_FULLNAME="full name"
 const val USER_USERNAME="user name"
 const val USER_EMAIL="user email"
@@ -26,7 +27,7 @@ const val POST_ID_EXSTRA="post_id_exstra"
 const val POST_IMAGE="post_image"
 const val POST_PUBLISHER="post_pablisher"
 const val POST_PUBLISHER_ID="post_publisher_id"
-const val POST_PUBLISHER_ID_EXSTRA="post_publisher_id_exstra"
+
 
 const val POST_DISCTIPTION="post_discription"
 const val POST_LIKECOUNTER="post_like_counter"
@@ -42,12 +43,17 @@ const val SIMPLE_POST="bobo"
 const val LIKES_REF_NEW="Likes New"
 const val  SIMPLE_ITEM="Simple Item"
 const val BOL="Bol"
+const val USERS_ID="User Id"
 const val USERS="User Id"
 
 
-const val COMMENT_REF="Comments"
+//const val COMMENT_REF="Comments"
+const val COMMENT_REF="Comments New"
 const val COMMENT_DOC="comment"
-const val COMMENT_PUBLISHER_USERNAME="comment publisher userName"
+
+const val COMMENT_PUBLISHER="comment_publisher"
+const val COMMENT_PUBLISHER_ID="comment_userId"
+const val COMMENT_POST_ID="comment_ postId"
 const val COMMENT_TEXT="comment_text"
 
 const val SAVE_REF="Saves"
@@ -62,6 +68,20 @@ const val TITLE_LIKES="likes"
 const val TITLE_FOLLOWING="following"
 const val TITLE_FOLLOERS="followers"
 const val TITLE_VIEW="view"
+
+const val NOTIFICATION_REF="not"
+const val NOTIFICATION_LIST="Notification List"
+
+const val NOTIFICATION_USER_ID="notification_user_id"
+const val NOTIFICATION_TEXT="notification_text"
+const val NOTIFICATION_POST_ID="notification_post_id"
+const val NOTIFICATION_IS_POST="notification_is_post"
+
+const val NOTIFICATION_ISPOST_TRUE="Its post"
+const val NOTIFICATION_ISPOST_FALSE="Its not post"
+
+
+
 
 
 

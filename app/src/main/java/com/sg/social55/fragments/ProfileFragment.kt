@@ -18,6 +18,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 import com.sg.social55.R
+import com.sg.social55.activities.MainActivity
 import com.sg.social55.activities.ShowUsersActivity
 import com.sg.social55.adapters.MyImagesAdapter
 import com.sg.social55.model.Post
@@ -25,6 +26,7 @@ import com.sg.social55.setting.AccountSettingActivity
 import com.sg.social55.setting.SignInActivity
 import com.sg.social55.uilities.*
 import com.squareup.picasso.Picasso
+import kotlinx.android.synthetic.main.activity_sign_in.view.*
 import kotlinx.android.synthetic.main.fragment_profile.*
 import kotlinx.android.synthetic.main.fragment_profile.view.*
 import java.util.*
@@ -50,6 +52,8 @@ class ProfileFragment : Fragment() {
     private lateinit var recyclerViewSaveImage: RecyclerView
 
 
+
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -59,10 +63,16 @@ class ProfileFragment : Fragment() {
 
         currentUserUid = FirebaseAuth.getInstance().currentUser?.uid.toString()
         currentUserName = FirebaseAuth.getInstance().currentUser?.displayName.toString()
+    //   util.logi("currentUserUid=$currentUserUid ,  currentUserName=$currentUserName")
 
+        val pref = context?.getSharedPreferences(SHARPREF_REF, Context.MODE_PRIVATE)
+        if (pref != null) {
+            followUserName = pref.getString(POST_PUBLISHER, "none").toString()
+            followUserId = pref.getString(POST_PUBLISHER_ID, "none").toString()
+        }
+      // util.logi(" Profile Fragment ||followUserId=$followUserId ,followUserName=$followUserName ,")
 
         //recyclerView for uploadImage
-
         recyclerViewUploadImage = view.recycler_view_upload_pic
         recyclerViewUploadImage.setHasFixedSize(true)
         val linearManager = GridLayoutManager(context, 3)
@@ -114,13 +124,6 @@ class ProfileFragment : Fragment() {
             recyclerViewUploadImage.visibility = View.GONE
         }
 
-
-        val pref = context?.getSharedPreferences(SHARPREF_REF, Context.MODE_PRIVATE)
-        if (pref != null) {
-            followUserName = pref.getString(PUBLISHER_EXSTRA, "none").toString()
-            followUserId = pref.getString(PROFILE_ID_EXSTRA, "none").toString()
-        }
-
         if (followUserName == currentUserName) {
             view.edit_account_settings_btn.text = "Edit Profile"
         } else {
@@ -167,7 +170,6 @@ class ProfileFragment : Fragment() {
         myPhotos()
         getTotalNumOfPost()
         mySavesPostList()
-
         return view
     }
 
@@ -262,6 +264,13 @@ class ProfileFragment : Fragment() {
     private fun userInfo() {
         FirebaseFirestore.getInstance().collection(USER_REF).document(followUserId).get()
             .addOnSuccessListener {
+                val user=util.convertToUser(it)
+                Picasso.get().load(user.profileImage).placeholder(R.drawable.profile)
+                    .into(view?.profile_image_profile_fragment)
+                view?.full_name_profile_fragment?.text = user.fullName
+                bio_profile_fragment?.text =user.dio
+
+            /*
                 val data = it.data
                 if (data != null) {
                     if (data[USER_IMAGE] != null) {
@@ -279,9 +288,10 @@ class ProfileFragment : Fragment() {
                     val mainString = "Current:$currentUserName         following:$followUserName"
                     //  val mainString = "Current:$currentUserName  "
                     view?.profile_fragment_username?.text = mainString
-                }
-            }.addOnFailureListener {
-                // Log.d("fff", "Fail ->${it.localizedMessage}")
+                }*/
+
+                val mainString = "Current:$currentUserName         following:$followUserName"
+                view?.profile_fragment_username?.text = mainString
             }
     }
 
@@ -320,6 +330,12 @@ class ProfileFragment : Fragment() {
             }
         }
     }
+
+
+
+
+
+
 }
 
 

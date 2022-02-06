@@ -9,21 +9,24 @@ import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.sg.social55.activities.MainActivity
 import com.sg.social55.databinding.ActivitySignInBinding
+import com.sg.social55.uilities.Utility
 
 class SignInActivity : AppCompatActivity() {
-   private lateinit var binding:ActivitySignInBinding
+    private lateinit var binding: ActivitySignInBinding
+    val util=Utility()
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        binding= ActivitySignInBinding.inflate(layoutInflater)
+        binding = ActivitySignInBinding.inflate(layoutInflater)
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         binding.signupLinkBtn.setOnClickListener {
-            val intent= Intent(this, SignUpActivity::class.java)
+            val intent = Intent(this, SignUpActivity::class.java)
             startActivity(intent)
         }
         binding.loginBtn.setOnClickListener {
             loginUser()
         }
+        testBtn()
     }
 
     private fun loginUser() {
@@ -66,11 +69,51 @@ class SignInActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        if (FirebaseAuth.getInstance().currentUser!=null){
-            val intent= Intent(this, MainActivity::class.java)
+        if (FirebaseAuth.getInstance().currentUser != null) {
+            val intent = Intent(this, MainActivity::class.java)
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
             startActivity(intent)
             finish()
         }
+    }
+    private fun testBtn() {
+        binding.mr10Btn.setOnClickListener {
+            signInBtn(1)
+        }
+        binding.mr20Btn.setOnClickListener {
+            signInBtn(2)
+        }
+        binding.mr30Btn.setOnClickListener {
+            signInBtn(3)
+        }
+        binding.mr40Btn.setOnClickListener {
+            signInBtn(4)
+        }
+        binding.mr50Btn.setOnClickListener {
+            signInBtn(5)
+        }
+    }
+
+    private fun signInBtn(index: Int) {
+        var email = ""
+        var password = "111111"
+        when (index) {
+            1 -> email = "mr10@gmail.com"
+            2 -> email = "mr20@gmail.com"
+            3 -> email = "mr30@gmail.com"
+            4 -> email = "mr40@gmail.com"
+            5 -> email = "mr50@gmail.com"
+        }
+        FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    val intent = Intent(this, MainActivity::class.java)
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+                    startActivity(intent)
+                    finish()
+                }
+            }
+
+
     }
 }

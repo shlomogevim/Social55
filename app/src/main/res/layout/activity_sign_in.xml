@@ -53,12 +53,76 @@
         android:layout_marginTop="6dp"
         android:layout_marginRight="20dp"
         android:backgroundTint="@color/white"
-        android:text="Login"
         android:inputType="textEmailAddress"
-        android:textSize="18sp"
+        android:text="Login"
         android:textAllCaps="false"
-        android:textColor="@color/black"/>
+        android:textColor="@color/black"
+        android:textSize="18sp" />
 
+    <Button
+        android:id="@+id/mr10_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="1dp"
+        android:layout_marginTop="6dp"
+        android:layout_marginRight="1dp"
+        android:text="Mr10"
+        android:textAllCaps="false"
+        android:textColor="@color/white"
+        android:textSize="10sp" />
+    <Button
+        android:id="@+id/mr20_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="1dp"
+        android:layout_marginTop="6dp"
+        android:layout_marginRight="1dp"
+        android:layout_toRightOf="@id/mr10_btn"
+        android:text="Mr20"
+        android:textSize="10sp"
+        android:textAllCaps="false"
+        android:textColor="@color/white"/>
+    <Button
+        android:id="@+id/mr30_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="1dp"
+        android:layout_marginTop="6dp"
+        android:layout_marginRight="1dp"
+        android:layout_toRightOf="@id/mr20_btn"
+        android:text="Mr30"
+        android:textSize="10sp"
+        android:textAllCaps="false"
+        android:textColor="@color/white"/>
+    <Button
+        android:id="@+id/mr40_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="1dp"
+        android:layout_marginTop="6dp"
+        android:layout_marginRight="1dp"
+        android:layout_toRightOf="@id/mr30_btn"
+        android:text="Mr40"
+        android:textSize="10sp"
+        android:textAllCaps="false"
+        android:textColor="@color/white"/>
+    <Button
+        android:id="@+id/mr50_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="1dp"
+        android:layout_marginTop="6dp"
+        android:layout_marginRight="1dp"
+        android:layout_toRightOf="@id/mr40_btn"
+        android:text="Mr50"
+        android:textSize="10sp"
+        android:textAllCaps="false"
+        android:textColor="@color/white"/>
 
     <Button
         android:id="@+id/signup_link_btn"

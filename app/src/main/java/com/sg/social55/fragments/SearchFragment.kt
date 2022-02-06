@@ -8,30 +8,26 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QuerySnapshot
-import com.google.firebase.ktx.Firebase
-import com.sg.social55.R
 import com.sg.social55.adapters.UserAdapter
 import com.sg.social55.databinding.FragmentSearchBinding
 import com.sg.social55.model.User
 import com.sg.social55.uilities.*
+import kotlinx.coroutines.launch
 import java.util.*
 import kotlin.collections.ArrayList
 
 class SearchFragment : Fragment() {
 
     private lateinit var binding: FragmentSearchBinding
+    val util = Utility()
 
-   private lateinit var userAdapter: UserAdapter
-    private var users= arrayListOf<User>()
-
-
+    private lateinit var userAdapter: UserAdapter
+    private var users = arrayListOf<User>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -42,7 +38,6 @@ class SearchFragment : Fragment() {
         val recyclerView = binding.recyclerViewSearch
         recyclerView.setHasFixedSize(true)
         recyclerView.layoutManager = LinearLayoutManager(context)
-
         userAdapter = UserAdapter(users as ArrayList<User>, true)
         recyclerView.adapter = userAdapter
 
@@ -62,61 +57,44 @@ class SearchFragment : Fragment() {
         return binding.root
     }
 
-    private fun searchUser(input: String) {
+    private fun retrieveUsers() {
         FirebaseFirestore.getInstance().collection(USER_REF)
-           .orderBy(USER_FULLNAME)
-            .startAt(input)
-            .endAt(input+"\uf8ff")
-            .addSnapshotListener { snapshot, exception->
-                if (exception != null) {
-                    Toast.makeText(context, "Error in downloadind users", Toast.LENGTH_LONG).show()
-                }else{
-                    if (snapshot!=null){
-                        parseData(snapshot)
+            .addSnapshotListener { value, error ->
+                if (value != null) {
+                    for (doc in value.documents) {
+                        var user = util.convertToUser(doc)
+                        users.add(user)
                     }
                 }
+                util.logi("users11=$users")
+                userAdapter.notifyDataSetChanged()
             }
     }
 
-    private fun retrieveUsers() {
+    private fun searchUser(input: String) {
         FirebaseFirestore.getInstance().collection(USER_REF)
-           // .orderBy(USER_FULLNAME, Query.Direction.ASCENDING)
+            .orderBy(USER_FULLNAME)
+            .startAt(input)
+            .endAt(input + "\uf8ff")
             .addSnapshotListener { snapshot, exception ->
                 if (exception != null) {
                     Toast.makeText(context, "Error in downloadind users", Toast.LENGTH_LONG).show()
-                }else{
-                    if (snapshot!=null){
-                        parseData(snapshot)
+                } else {
+                    if (snapshot != null) {
+                        parseData1(snapshot)
                     }
                 }
             }
     }
 
-    private fun parseData(snapshot: QuerySnapshot) {
-        var name=""
-        var fullName=""
-        var email=""
-        var image=""
-        var bio=""
-        var uid=""
-        val auth=FirebaseAuth.getInstance().currentUser?.displayName
+    private fun parseData1(snapshot: QuerySnapshot) {
         users?.clear()
-        for (document in snapshot.documents){
-            name=document[USER_USERNAME] as String
-            fullName=document[USER_FULLNAME] as String
-            email=document[USER_EMAIL] as String
-            image=document[USER_IMAGE] as String
-            bio=document[USER_BIO] as String
-            uid=document[USER_UID] as String
-
-         //   if (name!=auth) {
-                val newUser = User(name, fullName, email, image, bio, uid)
-                users?.add(newUser)
-           // }
+        for (document in snapshot.documents) {
+          val user=util.convertToUser(document)
+            users?.add(user)
         }
         userAdapter.notifyDataSetChanged()
     }
-
 
 }
 

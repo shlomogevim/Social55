@@ -34,7 +34,7 @@ class MainActivity : AppCompatActivity() {
                     return@OnNavigationItemSelectedListener true
                 }
                 R.id.nav_notification -> {
-                    moveToFragment(NotificationFragment())
+                   moveToFragment(NotificationFragment())
                     return@OnNavigationItemSelectedListener true
                 }
                 R.id.nav_profile -> {
