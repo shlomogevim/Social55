@@ -45,7 +45,6 @@ class Utility {
                     user = convertToUser(task.result)
                 }
             }
-
         return user
     }
 
@@ -164,6 +163,16 @@ class Utility {
             }
     }
 
+    fun addCommentNotification(postID:String,commentText:String) {
+        val data = HashMap<String, Any>()
+        data[NOTIFICATION_USER_ID] = currentUserUid.toString()
+        data[NOTIFICATION_TEXT] = "commented: " + commentText
+        data[NOTIFICATION_POST_ID] =postID
+        data[NOTIFICATION_IS_POST] = NOTIFICATION_ISPOST_TRUE
+        FirebaseFirestore.getInstance().collection(NOTIFICATION_REF)
+            .document(currentUserUid).collection(NOTIFICATION_LIST).add(data)
+    }
+
     private fun addPostNotification(post: Post) {
         val data = HashMap<String, Any>()
         data[NOTIFICATION_USER_ID] =currentUserUid
@@ -177,14 +186,24 @@ class Utility {
     }
 
      fun addUserNotification(user:User) {
-        val data = HashMap<String, Any>()
-        data[NOTIFICATION_USER_ID] =user.uid
+      val data = HashMap<String, Any>()
+        data[NOTIFICATION_USER_ID] =currentUserUid
          data[NOTIFICATION_TEXT] = "start following you "
          data[NOTIFICATION_POST_ID] = "No Post"
          data[NOTIFICATION_IS_POST] = NOTIFICATION_ISPOST_FALSE
         FirebaseFirestore.getInstance().collection(NOTIFICATION_REF)
-            .document(currentUserUid).collection(NOTIFICATION_LIST).add(data)
-    }
+            .document(user.uid).collection(NOTIFICATION_LIST).add(data)
+      //------------
+          val data1 = HashMap<String, Any>()
+        data1[NOTIFICATION_USER_ID] =user.uid
+        data1[NOTIFICATION_TEXT] = "start to follow "+user.userName
+        data1[NOTIFICATION_POST_ID] = "No Post"
+        data1[NOTIFICATION_IS_POST] = NOTIFICATION_ISPOST_FALSE
+        FirebaseFirestore.getInstance().collection(NOTIFICATION_REF)
+            .document(currentUserUid).collection(NOTIFICATION_LIST).add(data1)
+       logi("Utility11 || \n currentUserUid=$currentUserUid,user.uid=${user.uid},user.userName=${user.userName}")
+
+     }
     fun simpleData(): HashMap<String, Any> {
         val data = HashMap<String, Any>()
         data["Bol"] = "Exist"
@@ -253,4 +272,6 @@ class Utility {
     fun seePost(post: Post) {
         logi("postId=${post.postId},publisher=${post.publisher},postPublisherId=${post.postPublisherId},description=${post.description}")
     }
-}
+
+
+    }

@@ -67,7 +67,7 @@ class UserAdapter(val users: List<User>, var isFragment: Boolean = false) :
             followButton.setOnClickListener {
                 if (followButton.text == "Follow") {
                     followToFollowing(user)
-                    util.addUserNotification(user)
+                  //  util.addUserNotification(user)
                 } else {
                     followingToFollow(user)
                 }
@@ -76,15 +76,16 @@ class UserAdapter(val users: List<User>, var isFragment: Boolean = false) :
 
             itemView.setOnClickListener {
                 if (isFragment) {
-                    val pref = context.getSharedPreferences("PREFS", Context.MODE_PRIVATE).edit()
+                    val pref = context.getSharedPreferences(SHARPREF_REF, Context.MODE_PRIVATE).edit()
                     pref.putString(USER_IDEXSRTA, user.uid)
                     pref.putString(USER_USERNAMEEXSRTA, user.userName)
                     pref.apply()
                     (context as FragmentActivity).supportFragmentManager.beginTransaction()
                         .replace(R.id.fragment_container, ProfileFragment()).commit()
                 } else {
+                   // util.logi("UserAdapter11 || /n not fragment ")
                     val intent = Intent(context, MainActivity::class.java)
-                    intent.putExtra("publisherId", user.uid)
+                    intent.putExtra(PUBLISHER_EXSTRA, user.uid)
                     context.startActivity(intent)
                 }
             }
@@ -102,6 +103,7 @@ class UserAdapter(val users: List<User>, var isFragment: Boolean = false) :
                         .collection(FOLLOWER_REF).document(currentName)
                         .set(data)     //user being follow by current
                 }
+            util.addUserNotification(user)
         }
 
         private fun followingToFollow(user: User) {

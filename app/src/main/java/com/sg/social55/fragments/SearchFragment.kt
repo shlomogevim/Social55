@@ -66,7 +66,7 @@ class SearchFragment : Fragment() {
                         users.add(user)
                     }
                 }
-                util.logi("users11=$users")
+               // util.logi("users11=$users")
                 userAdapter.notifyDataSetChanged()
             }
     }

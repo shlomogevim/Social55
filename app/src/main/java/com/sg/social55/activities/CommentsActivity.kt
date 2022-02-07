@@ -28,7 +28,6 @@ class CommentsActivity() : AppCompatActivity() {
     var publisher = ""
     var publisherId = ""
     val currentUserUid = FirebaseAuth.getInstance().currentUser?.uid.toString()
-    val currentUserName = FirebaseAuth.getInstance().currentUser?.displayName
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,7 +40,7 @@ class CommentsActivity() : AppCompatActivity() {
         postId = intent.getStringExtra(COMMENT_POST_ID).toString()
         publisher = intent.getStringExtra(COMMENT_PUBLISHER).toString()
         publisherId = intent.getStringExtra(COMMENT_PUBLISHER_ID).toString()
-   //     util.logi("postId=$postId ,  publisher=$publisher ,  publisherId=$publisherId")
+        //     util.logi("postId=$postId ,  publisher=$publisher ,  publisherId=$publisherId")
 
         recyclerView = binding.recyclerViewComments
         commentAdapter = CommentAdapter(comments)
@@ -56,16 +55,19 @@ class CommentsActivity() : AppCompatActivity() {
         readComments()
         getPostImage()
 
+
         binding.postComment.setOnClickListener {
-            if (binding.addComment.text.toString() == "") {
+            val commentText = binding.addComment.text.toString()
+          // util.logi("CommentsActivity||\n commentText11 =$commentText")
+            if (commentText == "") {
                 Toast.makeText(this, "Please write comment first ...", Toast.LENGTH_LONG).show()
             } else {
                 if ((!postId.isNullOrBlank())
                     && (!publisher.isNullOrBlank())
                     && (!publisherId.isNullOrBlank())
                 ) {
-                    util.addComment(binding.addComment, postId, publisher, publisherId)
-                    addNotification()
+                 //   util.logi("CommentsActivity|| \n commentText22 =$commentText")
+                    util.addCommentNotification(postId, commentText)
                     binding.addComment.text.clear()
                     finish()
                 }
@@ -105,34 +107,6 @@ class CommentsActivity() : AppCompatActivity() {
             }
     }
 
-
-    private fun addNotification() {
-        val data = HashMap<String, Any>()
-        data[NOTIFICATION_PUBLISERID] = currentUserUid.toString()
-        data[NOTIFICATION_PUBLISERNAME] = currentUserName.toString()
-
-
-
-
-        data[NOTIFICATION_TEXT] = "commented: " + binding.addComment.text
-        data[NOTIFICATION_POSTID] = postId
-        data[NOTIFICATION_ISPOST] = NOTIFICATION_ISPOST_TRUE
-
-
-
-
-        FirebaseFirestore.getInstance().collection(NOTIFICATION_REF)
-            .document(publisherId).collection(NOTIFICATION_LIST).add(data)
-    }
-
 }
 
-const val NOTIFICATION_PUBLISERID="notification_pablisherId"
-const val NOTIFICATION_PUBLISERNAME="notification_pablisherName"
-const val POST_PUBLISERID="post_pablisherId"
-const val POST_PUBLISERNAME="post_pablisherName"
-const val NOTIFICATION_POSTID="notification_postid"
-const val NOTIFICATION_TEXT="notification_text"
-const val NOTIFICATION_ISPOST="notification_post_or_no"
-const val NOTIFICATION_ISPOST_TRUE="Its post"
-const val NOTIFICATION_ISPOST_FALSE="Its not post"
+

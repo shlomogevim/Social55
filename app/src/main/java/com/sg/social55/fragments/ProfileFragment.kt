@@ -63,14 +63,15 @@ class ProfileFragment : Fragment() {
 
         currentUserUid = FirebaseAuth.getInstance().currentUser?.uid.toString()
         currentUserName = FirebaseAuth.getInstance().currentUser?.displayName.toString()
-    //   util.logi("currentUserUid=$currentUserUid ,  currentUserName=$currentUserName")
+      //util.logi("ProfileFragment11 || \n currentUserUid=$currentUserUid ,  currentUserName=$currentUserName")
 
         val pref = context?.getSharedPreferences(SHARPREF_REF, Context.MODE_PRIVATE)
         if (pref != null) {
-            followUserName = pref.getString(POST_PUBLISHER, "none").toString()
             followUserId = pref.getString(POST_PUBLISHER_ID, "none").toString()
+            followUserName = pref.getString(POST_PUBLISHER, "none").toString()
+            pref.edit().remove(SHARPREF_REF).commit()
         }
-      // util.logi(" Profile Fragment ||followUserId=$followUserId ,followUserName=$followUserName ,")
+     // util.logi(" Profile Fragment12||\n followUserId===>$followUserId  , followUserName===>$followUserName")
 
         //recyclerView for uploadImage
         recyclerViewUploadImage = view.recycler_view_upload_pic

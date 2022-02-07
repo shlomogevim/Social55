@@ -52,7 +52,7 @@ class NotificationFragment : Fragment() {
                 if (task.isSuccessful) {
                     for (document in task.result!!) {
                         val noti = util.convertToNotification(document)
-                        util.logi("Notif. Fragment || noti=$noti")
+                       // util.logi("Notif. Fragment || noti=$noti")
                         notifications.add(noti)
                     }
                     adapter.notifyDataSetChanged()
