@@ -21,12 +21,26 @@ const val FOLLOW_REF="Follow"
 const val FOLLOWING_REF="Following"
 const val FOLLOWER_REF="Followers"
 
+
+
+
 const val POSTS_REF="Posts"
 const val POST_ID="post_id"
 const val POST_ID_EXSTRA="post_id_exstra"
 const val POST_IMAGE="post_image"
 const val POST_PUBLISHER="post_pablisher"
 const val POST_PUBLISHER_ID="post_publisher_id"
+
+
+//const val STORY_REF="Stories"
+const val STORY_REF="sto"
+const val STORIES_USERS_LIST="Stories Users List"
+const val STORY_IMAGE_URL="story_image_url"
+const val STORY_TIME_START="story_time_start"
+const val STORY_TIME_END="story_time_end"
+const val STORY_ID="story_id"
+const val STORY_USER_ID="story_user_id"
+
 
 
 const val POST_DISCTIPTION="post_discription"

@@ -1,35 +1,37 @@
 package com.sg.social55.fragments
 
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Adapter
 import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.QuerySnapshot
 import com.sg.social55.R
 import com.sg.social55.adapters.PostAdapter
-import com.sg.social55.databinding.FragmentHomeBinding
-import com.sg.social55.interfaces.CommentBtnInterface
+import com.sg.social55.adapters.StoryAdapter
 import com.sg.social55.interfaces.LikeBtnInterface
 import com.sg.social55.model.Post
+import com.sg.social55.model.Story
 import com.sg.social55.uilities.*
 import kotlinx.android.synthetic.main.fragment_home.view.*
 
 
 class HomeFragment : Fragment(), LikeBtnInterface {
+
     private lateinit var postAdapter: PostAdapter
-    private var postList= ArrayList<Post>()
-    private  var folloingList=ArrayList<String>()
-    private  var util= Utility()
+    private lateinit var storyAtapter: StoryAdapter
+
+    private var postList = ArrayList<Post>()
+    private var storyList = ArrayList<Story>()
+
+    private var folloingList = ArrayList<String>()
+
+    private var util = Utility()
     val currentUserUid = FirebaseAuth.getInstance().currentUser?.uid.toString()
     val currentUserName = FirebaseAuth.getInstance().currentUser?.displayName.toString()
     override fun onCreateView(
@@ -38,7 +40,7 @@ class HomeFragment : Fragment(), LikeBtnInterface {
     ): View? {
         var view = inflater.inflate(R.layout.fragment_home, container, false)
 
-        view.currentUserTV.text="Current: "+currentUserName
+        view.currentUserTV.text = "Current: " + currentUserName
 
         var recyclerView: RecyclerView? = null
         recyclerView = view.findViewById(R.id.recycler_view_home)
@@ -48,6 +50,15 @@ class HomeFragment : Fragment(), LikeBtnInterface {
         recyclerView.layoutManager = linearLayoutManager
         postAdapter = PostAdapter(postList, this)
         recyclerView.adapter = postAdapter
+
+        var recyclerViewStory: RecyclerView? = null
+        recyclerViewStory = view.findViewById(R.id.recycler_view_story)
+        val linearLayoutManager2 = LinearLayoutManager(context)
+        linearLayoutManager2.reverseLayout = true
+        linearLayoutManager2.stackFromEnd = true
+        recyclerViewStory.layoutManager = linearLayoutManager2
+        storyAtapter = StoryAdapter(storyList)
+        recyclerViewStory.adapter = storyAtapter
 
         checkFollowings()
 
@@ -62,27 +73,63 @@ class HomeFragment : Fragment(), LikeBtnInterface {
                 if (value != null) {
                     for (document in value.documents) {
                         folloingList.add(document.id)
+                       // util.logi("Homefragment11|| \n document.id=${document.id}")
                     }
                     folloingList.add(currentUserName)
-                    retrivePost()
+                    retrievePost()
+                    retrieveStories()
                 }
             }
     }
 
-    private fun retrivePost() {
+
+   private fun retrieveStories() {
+       storyList.clear()
+       FirebaseFirestore.getInstance().collection(STORY_REF)
+           .addSnapshotListener { value, error ->
+               val timeCurrent = System.currentTimeMillis()
+               val story = Story("", 0, 0, "", currentUserUid)
+            //   util.logi("Homefragment12|| \n  timeCurrent=${ timeCurrent},  story=${story}")
+               storyList.add(story)
+               for (id in folloingList){
+                   var countStory=0
+                //   util.logi("Homefragment13|| \n value=${value},  story=${story}")
+                   if (value != null) {
+                      // util.logi("Homefragment14|| \n value=${value}, value.documents=${value.documents},  story=${story}")
+                       for (document in value.documents) {
+                           val story = util.covertToStory(document)
+                         // util.logi("Homefragment15|| \n document=${document},  story=${story}")
+
+                           if (timeCurrent>story.timeStart && timeCurrent<story.timeEnd){
+                               countStory++
+                           }
+                       }
+                       if (countStory>0){
+                           storyList.add(story)
+                       }
+                   }
+
+
+               }
+            //    util.logi("Homefragment16|| \n storyList=${storyList}")
+
+               storyAtapter.notifyDataSetChanged()
+           }
+   }
+
+    private fun retrievePost() {
         postList.clear()
         FirebaseFirestore.getInstance().collection(POSTS_REF)
             .addSnapshotListener { value, error ->
                 if (value != null) {
-                    // parseData(value)
                     for (document in value.documents) {
                         val post = util.covertYoPost(document)
                         val publisher = post.publisher
                         if (publisher in folloingList) {  //see posts only if the belong to his foloowingList
                             postList.add(post)
                         }
-                        postAdapter.notifyDataSetChanged()
                     }
+                    postAdapter.notifyDataSetChanged()
                 }
             }
     }

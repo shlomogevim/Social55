@@ -7,10 +7,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.sg.social55.R
-import com.sg.social55.model.Comment
-import com.sg.social55.model.Notification
-import com.sg.social55.model.Post
-import com.sg.social55.model.User
+import com.sg.social55.model.*
 
 class Utility {
 
@@ -48,23 +45,7 @@ class Utility {
         return user
     }
 
-  /*  suspend fun getFirstValue() :Int {
-        //delay(1000L)
-        val value= Random.nextInt(1000)
-        logi(" Rturn first num : $value")
-        return  value
-    }*/
-
-
-    /*  fun findUser(id:String):User{
-        var user=User()
-    FirebaseFirestore.getInstance().collection(USER_REF).document(id).get()
-    .addOnSuccessListener {
-         user =convertToUser(it)
-         }
-       return user
-    }*/
-    fun covertYoPost(snap: DocumentSnapshot?): Post {
+      fun covertYoPost(snap: DocumentSnapshot?): Post {
         var postId = "No postId"
         var postImage: String =
             "https://firebasestorage.googleapis.com/v0/b/social55firestore.appspot.com/o/Default%20Images%2Fprofile.png?alt=media&token=4a02bf76-8cc4-43e7-9750-930176c9c9ee"
@@ -73,7 +54,6 @@ class Utility {
         var description: String = "No Post Description"
         var likeNumber: String = "0"
 
-
         postId = snap?.getString(POST_ID).toString()
         postImage = snap?.getString(POST_IMAGE).toString()
         publisher = snap?.getString(POST_PUBLISHER).toString()
@@ -81,13 +61,25 @@ class Utility {
         description = snap?.getString(POST_DISCTIPTION).toString()
         likeNumber = snap?.getString(POST_LIKECOUNTER).toString()
 
-
-       // logi("Utility || postId=$postId,postImage=?postImage,publisger=$publisher,publisherId=publisherId,description=$description,likeNumber=$likeNumber")
-
-
-
         val newPost = Post(postId, postImage, publisher, description, publisherId, likeNumber)
         return newPost
+    }
+
+       fun covertToStory(snap: DocumentSnapshot?): Story {
+        var imageUrl = "No postId"
+        var timeStart: Long = 0
+        var timeEnd: Long = 0
+        var storyId: String = ""
+        var userId: String = ""
+
+        imageUrl = snap?.getString(STORY_IMAGE_URL).toString()
+        timeStart = snap?.getLong(STORY_TIME_START)!!
+        timeEnd = snap?.getLong(STORY_TIME_END)!!
+        storyId = snap?.getString(STORY_ID).toString()
+        userId = snap?.getString(STORY_USER_ID).toString()
+
+        val newStory=Story(imageUrl,timeStart,timeEnd,storyId,userId)
+        return newStory
     }
 
     fun findPost(id: String): Post {

@@ -270,27 +270,6 @@ class ProfileFragment : Fragment() {
                     .into(view?.profile_image_profile_fragment)
                 view?.full_name_profile_fragment?.text = user.fullName
                 bio_profile_fragment?.text =user.dio
-
-            /*
-                val data = it.data
-                if (data != null) {
-                    if (data[USER_IMAGE] != null) {
-                        val imageId = data[USER_IMAGE] as String
-                        if (imageId != null) {
-                            Picasso.get().load(imageId).placeholder(R.drawable.profile)
-                                .into(view?.profile_image_profile_fragment)
-                        }
-                    }
-                    val fullname = data[USER_FULLNAME] as String
-                    view?.full_name_profile_fragment?.text = fullname
-                    val bio = data[USER_BIO] as String
-                    view?.bio_profile_fragment?.text = bio
-
-                    val mainString = "Current:$currentUserName         following:$followUserName"
-                    //  val mainString = "Current:$currentUserName  "
-                    view?.profile_fragment_username?.text = mainString
-                }*/
-
                 val mainString = "Current:$currentUserName         following:$followUserName"
                 view?.profile_fragment_username?.text = mainString
             }
