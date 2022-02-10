@@ -202,7 +202,20 @@ class Utility {
         return data
     }
 
-
+    fun convertToStory(snap: DocumentSnapshot?): Story {
+        /*   val imageUrl:String = "",
+    val timeStart:Long=0,
+    val timeEnd:Long=0,
+    val storyId:String="",
+    val userId:String=""*/
+        val imageUrl = snap?.getString(STORY_IMAGE_URL).toString()
+        val userId = snap?.getString(STORY_USER_ID).toString()
+        val storyId = snap?.getString(STORY_ID).toString()
+        val timeStart = snap?.getLong(STORY_TIME_START)
+        val timeEnd= snap?.getLong(STORY_TIME_END)?.toLong()
+        val newStory=Story(imageUrl, timeStart!!, timeEnd!!,storyId,userId)
+        return newStory
+    }
     fun convertToNotification(snap: DocumentSnapshot?): Notification {
         val userId = snap?.getString(NOTIFICATION_USER_ID).toString()
         val text = snap?.getString(NOTIFICATION_TEXT).toString()

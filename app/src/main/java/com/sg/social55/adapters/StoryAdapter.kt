@@ -10,6 +10,7 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat.startActivities
 import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.sg.social55.R
 import com.sg.social55.activities.AddStoryActivity
@@ -26,6 +27,7 @@ import kotlinx.android.synthetic.main.fragment_profile.view.*
 class StoryAdapter (val stories:ArrayList<Story>):RecyclerView.Adapter<StoryAdapter.ViewHolder>(){
     private lateinit var context: Context
     val util= Utility()
+    val currentUserId=FirebaseAuth.getInstance().currentUser?.uid
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         context=parent.context
@@ -57,6 +59,7 @@ class StoryAdapter (val stories:ArrayList<Story>):RecyclerView.Adapter<StoryAdap
     }
 
     inner class ViewHolder(itemView: View):RecyclerView.ViewHolder(itemView){
+
         val story_image_seen=itemView?.findViewById<CircleImageView>(R.id.story_image_seen)
         val story_image=itemView?.findViewById<CircleImageView>(R.id.story_image)
         val story_username=itemView?.findViewById<TextView>(R.id.story_username)
@@ -69,7 +72,6 @@ class StoryAdapter (val stories:ArrayList<Story>):RecyclerView.Adapter<StoryAdap
                     val user=util.convertToUser(it)
                     Picasso.get().load(user.profileImage).placeholder(R.drawable.profile)
                         .into(story_image)
-
                     if (index!=0){
                         Picasso.get().load(user.profileImage).placeholder(R.drawable.profile)
                             .into(story_image_seen)
@@ -82,9 +84,24 @@ class StoryAdapter (val stories:ArrayList<Story>):RecyclerView.Adapter<StoryAdap
                context.startActivities(arrayOf(intent))
             }
         }
+
+       /* private fun userInfo(userId:String,position:Int) {
+            FirebaseFirestore.getInstance().collection(USER_REF).document(currentUserId.toString()).get()
+                .addOnSuccessListener {
+                    val user=util.convertToUser(it)
+                    Picasso.get().load(user.profileImage).placeholder(R.drawable.profile)
+                        .into(story_image)
+                    if (position!=0){
+                        Picasso.get().load(user.profileImage).placeholder(R.drawable.profile)
+                            .into(story_image_seen)
+                        story_username.text=user.userName
+                    }
+                }
+        }*/
+
     }
 
-    private fun userInfo(viewHolder:ViewHolder,userId:String,position:Int) {
+    private fun userInfo1(viewHolder:ViewHolder,userId:String,position:Int) {
         FirebaseFirestore.getInstance().collection(USER_REF).document(userId).get()
             .addOnSuccessListener {
                 val user=util.convertToUser(it)

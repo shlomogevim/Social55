@@ -40,6 +40,8 @@ const val STORY_TIME_START="story_time_start"
 const val STORY_TIME_END="story_time_end"
 const val STORY_ID="story_id"
 const val STORY_USER_ID="story_user_id"
+const val STORY_VIEWS="story_views"
+const val STORY_VIEW_ID="story_views_id"
 
 
 
@@ -82,6 +84,7 @@ const val TITLE_LIKES="likes"
 const val TITLE_FOLLOWING="following"
 const val TITLE_FOLLOERS="followers"
 const val TITLE_VIEW="view"
+const val TITLE="title"
 
 const val NOTIFICATION_REF="not"
 const val NOTIFICATION_LIST="Notification List"

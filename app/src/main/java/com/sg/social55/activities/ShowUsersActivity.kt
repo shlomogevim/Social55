@@ -1,5 +1,6 @@
 package com.sg.social55.activities
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -50,7 +51,27 @@ class ShowUsersActivity : AppCompatActivity() {
     }
 
     private fun getViews() {
+        val userId=intent.getStringExtra(USER_ID)
+        val storyId=intent.getStringExtra(STORY_ID)
+       FirebaseFirestore.getInstance().collection(STORY_REF).document(STORIES_USERS_LIST)
+           .collection(userId.toString()).document(postId).collection(STORY_VIEWS)
+           .addSnapshotListener { value, error ->
 
+               if (value != null) {
+                   for (doc in value.documents){
+                       val story=util.covertToStory(doc)
+                   }
+               }
+
+           }
+
+/* data[STORY_VIEW_ID] = currentUserId.toString()
+        val ref = FirebaseFirestore.getInstance().collection(STORY_REF).document(STORIES_USERS_LIST)
+            .collection(userId).document(storyId).collection(STORY_VIEWS).add(data)*/
+
+        /*  intent.putExtra(USER_ID,userId)
+            intent.putExtra(STORY_ID,storyIdsList[counter])
+            intent.putExtra(TITLE, TITLE_VIEW)*/
 
     }
 
