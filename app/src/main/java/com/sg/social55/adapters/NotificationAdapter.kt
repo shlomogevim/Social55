@@ -51,7 +51,7 @@ class NotificationAdapter(val notifications: ArrayList<Notification>) :
 
         fun bindNotification(notification: Notification) {
             var user: User
-            var post= Post()
+         //   var post= Post()
             FirebaseFirestore.getInstance().collection(USER_REF).document(notification.userId).get()
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
@@ -69,13 +69,14 @@ class NotificationAdapter(val notifications: ArrayList<Notification>) :
                             .into(profileImage)
                     }
                 }
+
             if (notification.ispost == NOTIFICATION_ISPOST_TRUE) {
             //    var post: Post
                 FirebaseFirestore.getInstance().collection(POSTS_REF).document(notification.postId)
                     .get()
                     .addOnCompleteListener { task ->
                         if (task.isSuccessful) {
-                            post = util.covertYoPost(task.result)
+                           var  post = util.covertYoPost(task.result)
                             // util.logi("NitificationAdapter  || post=$post")
                             postImage.visibility = View.VISIBLE
                             Picasso.get().load(post.postImage).placeholder(R.drawable.profile)
@@ -85,6 +86,7 @@ class NotificationAdapter(val notifications: ArrayList<Notification>) :
                         }
                     }
             }
+
             profileImage.setOnClickListener {
                 //util.logi("NotificationAdapter \n 11")
                 val pref = context.getSharedPreferences(SHARPREF_REF, Context.MODE_PRIVATE).edit()
@@ -94,20 +96,36 @@ class NotificationAdapter(val notifications: ArrayList<Notification>) :
                             val user = util.convertToUser(task.result)
                             pref.putString(POST_PUBLISHER_ID, user.uid)
                             pref.putString(POST_PUBLISHER, user.userName)
-                            util.logi("NotificationAdapter12 \n user.uid=${user.uid}")
+                         //   util.logi("NotificationAdapter12 \n user.uid=${user.uid}")
                             (context as FragmentActivity).supportFragmentManager.beginTransaction()
                             .replace(R.id.fragment_container, ProfileFragment()).commit()
                         }
                     }
             }
 
-            postImage.setOnClickListener {
+         /*   postImage.setOnClickListener {
                 val editor = context.getSharedPreferences(SHARPREF_REF, Context.MODE_PRIVATE).edit()
                 editor.putString(POST_ID_EXSTRA, post.postId)
                 editor.apply()
                 (context as FragmentActivity).supportFragmentManager.beginTransaction()
                     .replace(R.id.fragment_container, PostDetailsFragment()).commit()
 
+            }*/
+
+            itemView.setOnClickListener {
+                if (notification.ispost== NOTIFICATION_ISPOST_TRUE){
+                    val editor = context.getSharedPreferences(SHARPREF_REF, Context.MODE_PRIVATE).edit()
+                    editor.putString(POST_ID_EXSTRA, notification.postId)
+                    editor.apply()
+                    (context as FragmentActivity).supportFragmentManager.beginTransaction()
+                        .replace(R.id.fragment_container, PostDetailsFragment()).commit()
+                }else{
+                    val editor = context.getSharedPreferences(SHARPREF_REF, Context.MODE_PRIVATE).edit()
+                    editor.putString(PROFILE_ID_EXSTRA, notification.postId)
+                    editor.apply()
+                    (context as FragmentActivity).supportFragmentManager.beginTransaction()
+                        .replace(R.id.fragment_container, ProfileFragment()).commit()
+                }
             }
         }
     }

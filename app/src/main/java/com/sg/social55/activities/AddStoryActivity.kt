@@ -56,6 +56,8 @@ class AddStoryActivity : AppCompatActivity() {
     }
 
     private fun uploadStory() {
+      //  util.logi("AddStoryActivity10 /n   imageUri =${ imageUri }")
+
         when {
             imageUri == null -> sendToast("Please select image first.")
             else -> {
@@ -81,7 +83,6 @@ class AddStoryActivity : AppCompatActivity() {
                         if (task.isSuccessful) {
                             val downloadUrl = task.result
                             myUrl = downloadUrl.toString()
-
                             val data = HashMap<String, Any>()
                             data[STORY_ID] = "1"
                             data[STORY_IMAGE_URL]=myUrl
@@ -90,13 +91,11 @@ class AddStoryActivity : AppCompatActivity() {
                             data[STORY_USER_ID]=currentUserUid.toString()
                          //   util.logi("AddStoryActivity11 || \n data=${data}")
                             val ref = FirebaseFirestore.getInstance().collection(STORY_REF).document( STORIES_USERS_LIST).collection(currentUserUid.toString() )
-                            ref.add(data)
-
-                                .addOnSuccessListener {
+                            ref.add(data).addOnSuccessListener {
                                     sendToast("Story uploaded successfully.")
                                     data[STORY_ID] = it.id
                                     ref.document(it.id).update(data)
-                                    util.logi("AddStoryActivity12|| \n it.id=${it.id},data=${data}")
+                                  //  util.logi("AddStoryActivity12|| \n it.id=${it.id},data=${data}")
                                     startActivity(Intent(this@AddStoryActivity, MainActivity::class.java))
                                     finish()
                                     progressDialog.dismiss()

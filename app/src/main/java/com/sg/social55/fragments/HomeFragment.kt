@@ -42,6 +42,16 @@ class HomeFragment : Fragment(), LikeBtnInterface {
 
         view.currentUserTV.text = "Current: " + currentUserName
 
+
+        var recyclerViewStory: RecyclerView? = null
+        recyclerViewStory = view.findViewById(R.id.recycler_view_story)
+        val linearLayoutManagerStory = LinearLayoutManager(context)
+        linearLayoutManagerStory.reverseLayout = true
+        linearLayoutManagerStory.stackFromEnd = true
+        recyclerViewStory.layoutManager = linearLayoutManagerStory
+        storyAtapter = StoryAdapter(storyList)
+        recyclerViewStory.adapter = storyAtapter
+
         var recyclerView: RecyclerView? = null
         recyclerView = view.findViewById(R.id.recycler_view_home)
         val linearLayoutManager = LinearLayoutManager(context)
@@ -51,14 +61,6 @@ class HomeFragment : Fragment(), LikeBtnInterface {
         postAdapter = PostAdapter(postList, this)
         recyclerView.adapter = postAdapter
 
-        var recyclerViewStory: RecyclerView? = null
-        recyclerViewStory = view.findViewById(R.id.recycler_view_story)
-        val linearLayoutManager2 = LinearLayoutManager(context)
-        linearLayoutManager2.reverseLayout = true
-        linearLayoutManager2.stackFromEnd = true
-        recyclerViewStory.layoutManager = linearLayoutManager2
-        storyAtapter = StoryAdapter(storyList)
-        recyclerViewStory.adapter = storyAtapter
 
         checkFollowings()
 
@@ -73,7 +75,7 @@ class HomeFragment : Fragment(), LikeBtnInterface {
                 if (value != null) {
                     for (document in value.documents) {
                         folloingList.add(document.id)
-                       // util.logi("Homefragment11|| \n document.id=${document.id}")
+                        // util.logi("Homefragment11|| \n document.id=${document.id}")
                     }
                     folloingList.add(currentUserName)
                     retrievePost()
@@ -82,40 +84,31 @@ class HomeFragment : Fragment(), LikeBtnInterface {
             }
     }
 
-
-   private fun retrieveStories() {
-       storyList.clear()
-       FirebaseFirestore.getInstance().collection(STORY_REF)
-           .addSnapshotListener { value, error ->
-               val timeCurrent = System.currentTimeMillis()
-               val story = Story("", 0, 0, "", currentUserUid)
-            //   util.logi("Homefragment12|| \n  timeCurrent=${ timeCurrent},  story=${story}")
-               storyList.add(story)
-               for (id in folloingList){
-                   var countStory=0
-                //   util.logi("Homefragment13|| \n value=${value},  story=${story}")
-                   if (value != null) {
-                      // util.logi("Homefragment14|| \n value=${value}, value.documents=${value.documents},  story=${story}")
-                       for (document in value.documents) {
-                           val story = util.covertToStory(document)
-                         // util.logi("Homefragment15|| \n document=${document},  story=${story}")
-
-                           if (timeCurrent>story.timeStart && timeCurrent<story.timeEnd){
-                               countStory++
-                           }
-                       }
-                       if (countStory>0){
-                           storyList.add(story)
-                       }
-                   }
-
-
-               }
-            //    util.logi("Homefragment16|| \n storyList=${storyList}")
-
-               storyAtapter.notifyDataSetChanged()
-           }
-   }
+    private fun retrieveStories() {
+        storyList.clear()
+        val story = Story("", 0, 0, "", currentUserUid)
+        storyList.add(story)
+        val timeCurrent = System.currentTimeMillis()
+        for (id in folloingList) {
+        FirebaseFirestore.getInstance().collection(STORY_REF).document(STORIES_USERS_LIST)
+            .collection(id).addSnapshotListener { value, error ->
+//   util.logi("Homefragment12|| \n  timeCurrent=${ timeCurrent},  story=${story}\n")
+//    util.logi("Homefragment12|| \n  id=${ id}")
+                 //   var countStory = 0
+                    if (value != null) {
+                        // util.logi("Homefragment14|| \n value=${value}, value.documents=${value.documents},  story=${story}")
+                        for (document in value.documents) {
+                            var story = util.covertToStory(document)
+                            if (timeCurrent > story.timeStart && timeCurrent < story.timeEnd) {
+                                storyList.add(story)
+                            }
+                        }
+                    }
+                        //  util.logi("Homefragment16|| \n storyList=${storyList}")
+                storyAtapter.notifyDataSetChanged()
+                }
+            }
+    }
 
     private fun retrievePost() {
         postList.clear()

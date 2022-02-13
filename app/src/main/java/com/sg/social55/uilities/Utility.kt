@@ -73,7 +73,7 @@ class Utility {
         var userId: String = ""
 
         imageUrl = snap?.getString(STORY_IMAGE_URL).toString()
-        timeStart = snap?.getLong(STORY_TIME_START)!!
+       timeStart = snap?.getLong(STORY_TIME_START)!!
         timeEnd = snap?.getLong(STORY_TIME_END)!!
         storyId = snap?.getString(STORY_ID).toString()
         userId = snap?.getString(STORY_USER_ID).toString()

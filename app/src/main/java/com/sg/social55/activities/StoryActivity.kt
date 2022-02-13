@@ -79,6 +79,7 @@ class StoryActivity : AppCompatActivity(), StoriesProgressView.StoriesListener {
             intent.putExtra(TITLE, TITLE_VIEW)
             startActivity(intent)
         }
+
         binding.storyDelete.setOnClickListener {
            val ref= FirebaseFirestore.getInstance().collection(STORY_REF).document(STORIES_USERS_LIST)
                 .collection(userId).document(storyIdsList[counter])
@@ -86,11 +87,8 @@ class StoryActivity : AppCompatActivity(), StoriesProgressView.StoriesListener {
                 if (task.isSuccessful){
                     Toast.makeText(this,"Delete story ....",Toast.LENGTH_LONG).show()
                 }
-
-
             }
         }
-
     }
 
     private fun getStories(userId: String) {

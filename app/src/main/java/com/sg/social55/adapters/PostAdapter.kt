@@ -15,6 +15,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.sg.social55.R
 import com.sg.social55.activities.CommentsActivity
 import com.sg.social55.activities.ShowUsersActivity
+import com.sg.social55.fragments.PostDetailsFragment
 import com.sg.social55.fragments.ProfileFragment
 import com.sg.social55.interfaces.LikeBtnInterface
 import com.sg.social55.model.Post
@@ -109,6 +110,42 @@ class PostAdapter(
                 context.startActivity(intentComment)
 
             }
+
+            postImage.setOnClickListener {
+                val editor = context.getSharedPreferences(SHARPREF_REF, Context.MODE_PRIVATE).edit()
+                editor.putString(POST_ID_EXSTRA, post.postId)
+                editor.apply()
+                (context as FragmentActivity).supportFragmentManager.beginTransaction()
+                    .replace(R.id.fragment_container, PostDetailsFragment()).commit()
+            }
+
+            publisher.setOnClickListener {
+                val editor = context.getSharedPreferences(SHARPREF_REF, Context.MODE_PRIVATE).edit()
+                editor.putString(PROFILE_ID_EXSTRA, post.publisher)
+                editor.apply()
+                (context as FragmentActivity).supportFragmentManager.beginTransaction()
+                    .replace(R.id.fragment_container, ProfileFragment()).commit()
+
+            }
+
+            profileImage.setOnClickListener {
+                val editor = context.getSharedPreferences(SHARPREF_REF, Context.MODE_PRIVATE).edit()
+                editor.putString(PROFILE_ID_EXSTRA,post.publisher)
+                editor.apply()
+                (context as FragmentActivity).supportFragmentManager.beginTransaction()
+                    .replace(R.id.fragment_container, ProfileFragment()).commit()
+
+            }
+
+            postImage.setOnClickListener {
+                val editor = context.getSharedPreferences(SHARPREF_REF, Context.MODE_PRIVATE).edit()
+                editor.putString(POST_ID_EXSTRA, post.postId)
+                editor.apply()
+                (context as FragmentActivity).supportFragmentManager.beginTransaction()
+                    .replace(R.id.fragment_container, PostDetailsFragment()).commit()
+
+            }
+
             likeBtn.setOnClickListener {
                 util.likeBtn_Press(post, likeBtn)
             }

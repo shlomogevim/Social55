@@ -52,7 +52,7 @@ class ShowUsersActivity : AppCompatActivity() {
 
     private fun getViews() {
         val userId=intent.getStringExtra(USER_ID)
-        val storyId=intent.getStringExtra(STORY_ID)
+      //  val storyId=intent.getStringExtra(STORY_ID)
        FirebaseFirestore.getInstance().collection(STORY_REF).document(STORIES_USERS_LIST)
            .collection(userId.toString()).document(postId).collection(STORY_VIEWS)
            .addSnapshotListener { value, error ->

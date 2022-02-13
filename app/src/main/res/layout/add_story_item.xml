@@ -17,11 +17,9 @@
             android:id="@+id/story_image"
             android:layout_width="45dp"
             android:layout_height="45dp"
-            android:src="@drawable/profile"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
-            >
-        </de.hdodenhof.circleimageview.CircleImageView>
+            android:src="@drawable/profile"></de.hdodenhof.circleimageview.CircleImageView>
 
 
         <de.hdodenhof.circleimageview.CircleImageView
